@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>~/workspace/colorpal/local_storage.html.html</title>
+<title>html5 local file upload demo</title>
 <meta name="Generator" content="Vim/7.3">
 <meta name="plugin-version" content="vim7.3_v10">
 <meta name="syntax" content="html">
@@ -11,12 +11,28 @@
 <!--
 pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
+
+#colorpal_canvas { 
+    border: 3px dotted #888;
+    width: 400px;
+    height: 300px;
+    margin: 0 20px;
+}
+
+#colorpal_canvas
+{
+    -webkit-transition: all 0.33s ease-in; /* Safari and Chrome */
+       -moz-transition: all 0.33s ease-in; /* Firefox 4 */
+         -o-transition: all 0.33s ease-in; /* Opera */
+            transition: all 0.33s ease-in;
+}
 -->
 </style>
 
 <script type="text/javascript">
 
 var ctx, canvas;
+var canvas_resize_class = "width: {0}; height: {1}; border-style: solid;";
 
 function handle_file_select( evt ) {
     var files = evt.target.files; // FileList object
@@ -30,14 +46,29 @@ function handle_file_select( evt ) {
         }
 
         var reader = new FileReader();
-
-        var img = document.createElement("img");
+        var img    = document.createElement("img");
 
         reader.onload = function(e) {
+
+            // Assign the image's src to the filesystem image's data URL [http://en.wikipedia.org/wiki/Data_URI_scheme]
             img.src = e.target.result; 
-            canvas.width = img.width;
-            canvas.height = img.height;
+
+            // Output a bit of the image's data
+            //console.log( img.src.slice(0,50) + "......." );
+
+            // Resize the canvas to the image size
+            canvas.width             = img.width;
+            canvas.height            = img.height;
+
+            // Resize the canvas with CSS to trigger CSS3 transitions
+            canvas.style.width       = img.width.toString() + "px";
+            canvas.style.height      = img.height.toString() + "px";
+            canvas.style.borderStyle = "solid";
+
+            // Draw the image inside the canvas
+            // TODO: why does it draw the image with the wrong dimensions now?
             ctx.drawImage(img, 0, 0, img.width, img.height);
+
         };
 
         // Read in the image file as a data URL.
@@ -58,6 +89,10 @@ window.onload = function() {
 </head>
 <body>
 <pre>
+
+<h1>HTML5 local file upload demo</h1>
+
+<p>choose an image from your local filesystem.  it will be drawn in a canvas element below.</p>
 
 <input type="file" id="colorpal_input_image"></input>
 
