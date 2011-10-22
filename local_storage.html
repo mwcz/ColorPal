@@ -16,6 +16,7 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 
 <script type="text/javascript">
 
+var ctx, canvas;
 
 function handle_file_select( evt ) {
     var files = evt.target.files; // FileList object
@@ -32,12 +33,10 @@ function handle_file_select( evt ) {
 
         var img = document.createElement("img");
 
-        reader.onloadend = function(e) {
+        reader.onload = function(e) {
             img.src = e.target.result; 
-            var canvas = document.getElementById("colorpal_canvas");
             canvas.width = img.width;
             canvas.height = img.height;
-            var ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, img.width, img.height);
         };
 
@@ -48,6 +47,8 @@ function handle_file_select( evt ) {
 
 window.onload = function() {
     document.getElementById("colorpal_input_image").onchange = handle_file_select;
+    canvas = document.getElementById("colorpal_canvas");
+    ctx = canvas.getContext("2d");
 };
 
 
