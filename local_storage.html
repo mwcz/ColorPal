@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>~/workspace/colorpal/local_storage.html.html</title>
+<meta name="Generator" content="Vim/7.3">
+<meta name="plugin-version" content="vim7.3_v10">
+<meta name="syntax" content="html">
+<meta name="settings" content="use_css,pre_wrap,expand_tabs">
+<style type="text/css">
+<!--
+pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
+body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
+-->
+</style>
+
+<script type="text/javascript">
+
+
+function handle_file_select( evt ) {
+    var files = evt.target.files; // FileList object
+
+    // Loop through the FileList and render image files as thumbnails.
+    for (var i = 0, f; f = files[i]; i++) {
+
+        // Only process image files.
+        if (!f.type.match('image.*')) {
+            continue;
+        }
+
+        var reader = new FileReader();
+
+        var img = document.createElement("img");
+
+        reader.onloadend = function(e) {
+            img.src = e.target.result; 
+            var canvas = document.getElementById("colorpal_canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+        };
+
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
+    }
+}
+
+window.onload = function() {
+    document.getElementById("colorpal_input_image").onchange = handle_file_select;
+};
+
+
+
+</script>
+
+</head>
+<body>
+<pre>
+
+<input type="file" id="colorpal_input_image"></input>
+
+<div id="list"></div>
+
+<canvas id="colorpal_canvas"></canvas>
+
+</pre>
+</body>
+</html>
+
