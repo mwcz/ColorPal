@@ -32,7 +32,13 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 <script type="text/javascript">
 
 var ctx, canvas;
-var canvas_resize_class = "width: {0}; height: {1}; border-style: solid;";
+
+var Colorpal = function() {
+
+// TODO: continue here
+// http://weblogs.asp.net/dwahlin/archive/2011/08/02/techniques-strategies-and-patterns-for-structuring-javascript-code-revealing-module-pattern.aspx
+
+} ();
 
 function handle_file_select( evt ) {
     var files = evt.target.files; // FileList object
@@ -48,31 +54,30 @@ function handle_file_select( evt ) {
         var reader = new FileReader();
         var img    = document.createElement("img");
 
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
+
         reader.onload = function(e) {
 
             // Assign the image's src to the filesystem image's data URL [http://en.wikipedia.org/wiki/Data_URI_scheme]
             img.src = e.target.result; 
 
             // Output a bit of the image's data
-            //console.log( img.src.slice(0,50) + "......." );
+            console.log( img.src.slice(0,50) + "......." );
 
             // Resize the canvas to the image size
             canvas.width             = img.width;
             canvas.height            = img.height;
 
             // Resize the canvas with CSS to trigger CSS3 transitions
-            canvas.style.width       = img.width.toString() + "px";
-            canvas.style.height      = img.height.toString() + "px";
+            canvas.style.width       = img.width + "px";
+            canvas.style.height      = img.height + "px";
             canvas.style.borderStyle = "solid";
 
             // Draw the image inside the canvas
-            // TODO: why does it draw the image with the wrong dimensions now?
             ctx.drawImage(img, 0, 0, img.width, img.height);
 
         };
-
-        // Read in the image file as a data URL.
-        reader.readAsDataURL(f);
     }
 }
 

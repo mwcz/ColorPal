@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>html5 local file upload demo</title>
+<meta name="Generator" content="Vim/7.3">
+<meta name="plugin-version" content="vim7.3_v10">
+<meta name="syntax" content="html">
+<meta name="settings" content="use_css,pre_wrap,expand_tabs">
+<style type="text/css">
+<!--
+pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
+body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
+
+#colorpal_canvas { 
+    border: 3px dotted #888;
+    width: 400px;
+    height: 300px;
+    margin: 0 20px;
+}
+
+#colorpal_canvas
+{
+    -webkit-transition: all 0.33s ease-in; /* Safari and Chrome */
+       -moz-transition: all 0.33s ease-in; /* Firefox 4 */
+         -o-transition: all 0.33s ease-in; /* Opera */
+            transition: all 0.33s ease-in;
+}
+-->
+</style>
+
+<script type="text/javascript" src="seedrandom.js"></script>
+
+<script type="text/javascript">
+
+function log() {
+    console.log( arguments );
+};
+
+var Cluster = function() {
+    var mean,
+        points;
+
+    init = function( _mean ) {
+        mean = _mean;
+        points = [];
+    },
+
+    get_mean = function() {
+    },
+
+    set_mean = function() {
+    },
+
+    get_points = function() {
+    },
+
+    add_point = function() {
+    },
+
+    centroid = function() {
+        // TODO: calculate centroid
+    };
+
+    return {
+        init     : init,
+        centroid : centroid
+    };
+};
+
+
+var Point = function() {
+    var r, g, b,
+
+    init = function( _r, _g, _b ) {
+        set( _r, _g, _b );
+    },
+
+    get = function() {
+        return [ r, g, b ];
+    },
+
+    set = function( _r, _g, _b ) {
+        r = _r;
+        g = _g;
+        b = _b;
+    };
+
+    return {
+        init : init,
+        set  : set,
+        get  : get
+    };
+};
+
+var KMeans = function() {
+
+    var K,
+        means,
+        clusters;
+
+    init = function( _k, _data ) {
+
+        var K = _k;
+        var means = [];
+        var clusters = [];
+
+        points = [];
+        min_corner = [];
+        max_corner = [];
+
+        load_canvas_pixel_array( _data );
+
+        // Initialize K clusters at random locations
+        Math.seedrandom("this is colorpal!");
+        for( i = K - 1; i >= 0; i-- ) {
+
+            // Create an empty cluster
+
+            // Generate a random location for this cluster
+            var mean = Point();
+            mean.init(
+                Math.floor( Math.random() * 255 ),
+                Math.floor( Math.random() * 255 ),
+                Math.floor( Math.random() * 255 )
+            );
+            log( "Initial mean added at [" + mean.get().toString() + "]" );
+            means.push( mean );
+        }
+
+        log( means );
+
+
+    },
+
+    load_canvas_pixel_array = function( _pixels ) {
+
+        log( "adding %d pixels", _pixels.length / 4 );
+        for( var i = _pixels.length - 1; i >= 0; i -= 4 ) {
+
+            var p = Point();
+            p.init( _pixels[ i - 3 ],
+                    _pixels[ i - 2 ],
+                    _pixels[ i - 1 ] );
+
+            points.push( p );
+            break;
+        }
+
+    };
+
+    return {
+        init : init
+    };
+
+};
+
+window.onload = function() {
+    var img = document.createElement("img");
+    img.src = "bbfeet.png";
+    canvas  = document.getElementById("colorpal_canvas");
+    ctx     = canvas.getContext("2d");
+
+    // match canvas height to img height
+    canvas.width = img.width / 10;
+    canvas.height = img.height / 10;
+    canvas.style.width = img.width / 10 + "px";
+    canvas.style.height = img.height / 10 + "px";
+
+    // draw image!
+    ctx.drawImage(img, 0, 0, img.width / 10, img.height / 10);
+
+    var image_data = ctx.getImageData( 0, 0, canvas.width, canvas.height ).data;
+
+    var km = KMeans();
+    km.init( 5, image_data );
+};
+</script>
+
+</head>
+<body>
+<pre>
+
+<h1>HTML5 color quantization</h1>
+
+<canvas id="colorpal_canvas"></canvas>
+
+</pre>
+</body>
+</html>
+
+
