@@ -1,3 +1,14 @@
+
+//  This is the median-cut algorithm.
+//  
+//  1. Find the smallest box which contains all the colors in the image.
+//  
+//  2. Sort the enclosed colors along the longest axis of the box.
+//  
+//  3. Split the box into 2 regions at median of the sorted list.
+//  
+//  4. Repeat the above process until the original color space has been divided into 256 regions.
+
 var Box = function() {
 
     var data,
@@ -22,6 +33,8 @@ var Box = function() {
     },
 
     // Return a comparison function based on a given index (for median-cut, sort on the longest axis)
+    // ie: sort ONLY on a single axis.  get_comparison_func( 1 ) would return a sorting function
+    // that sorts the data according to each item's Green value.
     get_comparison_func = function( _i ) {
         var sort_method = function( a, b ) {
             return a[_i] - b[_i];
@@ -34,11 +47,20 @@ var Box = function() {
         if( data.length == 0 ) console.error( "can't split; box is empty!" );
         if( data.length == 1 ) console.error( "can't split; box has one element!" );
 
-        // TODO RESUME HERE
+        sort();
 
-        // If even : split first half of data and second half of data into two new Boxes
-        // If odd  : center data point goes into the lower-end box (floor the index)
+        var med   = median();
 
+        var data1 = data.slice( 0, med );   // elements 0 through med
+        var data2 = data.slice( med );      // elements med through end
+
+        var box1  = Box();
+        var box2  = Box();
+
+        box1.init( data1 );
+        box2.init( data2 );
+
+        return [ box1, box2 ];
 
     },
 
@@ -92,16 +114,16 @@ var Box = function() {
     return {
 
         /**/ // this stuff will be private; only public for debugging
-        split            : split,
-        get_data            : get_data,
-        median           : median,
-        bounding_box     : bounding_box,
-        calculate_bounding_box     : calculate_bounding_box,
-        get_longest_axis : get_longest_axis,
-        sort             : sort,
+        split                  : split,
+        get_data               : get_data,
+        median                 : median,
+        bounding_box           : bounding_box,
+        calculate_bounding_box : calculate_bounding_box,
+        get_longest_axis       : get_longest_axis,
+        sort                   : sort,
+        get_comparison_func    : get_comparison_func,
         /**/
 
-        init            : init,
-        get_comparison_func : get_comparison_func
+        init : init
     };
 };
