@@ -10,16 +10,41 @@
 //  4. Repeat the above process until the original color space has been divided into 256 regions.
 
 var MedianCut = function() {
+
     var boxes,
 
     init = function( _data ) {
+
+        var box1 = Box();
+        box1.init( _data );
+
+        boxes = [ box1 ];
+
     },
 
     get = function( _number ) {
+
+        var values = [];
+
+        for( var i = _number - 1; i >= 0; --i ) {
+            var split_box = boxes.shift().split();
+            var box1 = split_box[0];
+            var box2 = split_box[1];
+            boxes.push( box1 );
+            boxes.push( box2 );
+        }
+
+        for( var i = _number - 1; i >= 0; --i ) {
+            values.push( boxes[i].average() );
+        }
+
+        return values;
+
     };
 
     return {
-        init : init
+        init : init,
+        get : get
     };
 };
 
