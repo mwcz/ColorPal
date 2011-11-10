@@ -29,6 +29,8 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 -->
 </style>
 
+<script type="text/javascript" src="median-cut.js"> </script>
+<script type="text/javascript" src="imagedata_to_rgb.js"> </script>
 <script type="text/javascript">
 
 var ctx, canvas;
@@ -63,7 +65,7 @@ function handle_file_select( evt ) {
             img.src = e.target.result; 
 
             // Output a bit of the image's data
-            console.log( img.src.slice(0,50) + "......." );
+            console.log( img.src.slice(128,256) + "......." );
 
             // Resize the canvas to the image size
             canvas.width             = img.width;
