@@ -12,7 +12,7 @@ function imagedata_to_rgb( _image_data ) {
 
     var rgb_array = [];
 
-    for( var i = ( _image_data.data.length / 4 ) - 1; i >= 0; i -= 4 ) {
+    for( var i = ( _image_data.data.length / 4 ) - 1; i >= 3; i -= 4 ) {
 
         rgb_array.push( [ 
             _image_data.data[ i - 3 ], 
