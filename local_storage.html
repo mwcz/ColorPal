@@ -26,6 +26,15 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
          -o-transition: all 0.33s ease-in; /* Opera */
             transition: all 0.33s ease-in;
 }
+
+#swatches { line-height: 0; }
+
+.swatch {
+    display: block;
+    float: left;
+    width: 30px;
+    height: 30px;
+}
 -->
 </style>
 
@@ -35,18 +44,11 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 
 var ctx, canvas;
 
-var Colorpal = function() {
-
-// TODO: continue here
-// http://weblogs.asp.net/dwahlin/archive/2011/08/02/techniques-strategies-and-patterns-for-structuring-javascript-code-revealing-module-pattern.aspx
-
-} ();
-
 function handle_file_select( evt ) {
     var files = evt.target.files; // FileList object
 
     // Loop through the FileList and render image files as thumbnails.
-    for (var i = 0, f; f = files[i]; i++) {
+    for ( var i = 0, f; f = files[i]; i++ ) {
 
         // Only process image files.
         if (!f.type.match('image.*')) {
@@ -56,16 +58,7 @@ function handle_file_select( evt ) {
         var reader = new FileReader();
         var img    = document.createElement("img");
 
-        // Read in the image file as a data URL.
-        reader.readAsDataURL(f);
-
-        reader.onload = function(e) {
-
-            // Assign the image's src to the filesystem image's data URL [http://en.wikipedia.org/wiki/Data_URI_scheme]
-            img.src = e.target.result; 
-
-            // Output a bit of the image's data
-            console.log( img.src.slice(128,256) + "......." );
+        img.onload = function() {
 
             // Resize the canvas to the image size
             canvas.width             = img.width;
@@ -78,6 +71,30 @@ function handle_file_select( evt ) {
 
             // Draw the image inside the canvas
             ctx.drawImage(img, 0, 0, img.width, img.height);
+
+            var data = ctx.getImageData( 0, 0, img.width, img.height );
+            var rgbdata = imagedata_to_rgb( data );
+            var mc = MedianCut();
+            mc.init( rgbdata );
+            var palette = mc.get(16);
+
+            for( var ic = palette.length - 1; ic >= 0; ic-- ) {
+                var color = palette[ic];
+                document.getElementById( "swatch" + ic ).style.backgroundColor = "rgb(" + parseInt(color[0]) + "," + parseInt(color[1]) + "," + parseInt(color[2]) + ")";
+                console.log( ic, color );
+                //console.log( document.getElementById( "swatch" + ic ).style.backgroundColor );
+            }
+
+
+        };
+
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
+
+        reader.onload = function(e) {
+
+            // Assign the image's src to the filesystem image's data URL [http://en.wikipedia.org/wiki/Data_URI_scheme]
+            img.src = e.target.result; 
 
         };
     }
@@ -104,6 +121,28 @@ window.onload = function() {
 <input type="file" id="colorpal_input_image"></input>
 
 <div id="list"></div>
+
+
+<div id="swatches">
+
+    <span id="swatch0" class="swatch"></span>
+    <span id="swatch1" class="swatch"></span>
+    <span id="swatch2" class="swatch"></span>
+    <span id="swatch3" class="swatch"></span>
+    <span id="swatch4" class="swatch"></span>
+    <span id="swatch5" class="swatch"></span>
+    <span id="swatch6" class="swatch"></span>
+    <span id="swatch7" class="swatch"></span>
+    <span id="swatch8" class="swatch"></span>
+    <span id="swatch9" class="swatch"></span>
+    <span id="swatch10" class="swatch"></span>
+    <span id="swatch11" class="swatch"></span>
+    <span id="swatch12" class="swatch"></span>
+    <span id="swatch13" class="swatch"></span>
+    <span id="swatch14" class="swatch"></span>
+    <span id="swatch15" class="swatch"></span>
+
+</div>
 
 <canvas id="colorpal_canvas"></canvas>
 
