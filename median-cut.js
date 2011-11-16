@@ -7,7 +7,8 @@
 //  
 //  3. Split the box into 2 regions at median of the sorted list.
 //  
-//  4. Repeat the above process until the original color space has been divided into 256 regions.
+//  4. Repeat the above process until the original color space has been divided into N regions
+//     where N is the number of colors you want.
 
 var MedianCut = function() {
 
@@ -27,13 +28,29 @@ var MedianCut = function() {
         var values = [];
 
         for( var i = _number - 1; i >= 0; --i ) {
-            var split_box = boxes.shift().split();
-            var box1 = split_box[0];
-            var box2 = split_box[1];
+
+            // find the box with the longest axis of them all...
+            var longest_box_index = 0;
+
+            for( var box_index = boxes.length - 1; box_index >= 0; --box_index ) {
+                if( boxes[ box_index ] > longest_box_index ) {
+                    longest_box_index = boxes[ box_index ];
+                }
+            }
+
+            // remove the longest box and split it
+            var box_to_split = boxes.splice( longest_box_index, 1 )[0];
+            var split_boxes = box_to_split.split();
+            var box1 = split_boxes[0];
+            var box2 = split_boxes[1];
+
+            // then push the resulting boxes into the boxes array
             boxes.push( box1 );
             boxes.push( box2 );
         }
 
+        // palette is complete.  get the average colors from each box
+        // and push them into the values array, then return.
         for( var i = _number - 1; i >= 0; --i ) {
             values.push( boxes[i].average() );
         }
@@ -79,7 +96,7 @@ var Box = function() {
         // Sorts all the elements in this box based on their values on the
         // longest axis.
 
-        var a           = get_longest_axis();
+        var a           = get_longest_axis().axis;
         var sort_method = get_comparison_func( a );
 
         data.sort( sort_method );
@@ -144,9 +161,13 @@ var Box = function() {
             avg_b += data[i][2];
         }
 
-        return [ avg_r / data.length,
-                 avg_g / data.length,
-                 avg_b / data.length ];
+        avg_r /= data.length;
+        avg_g /= data.length;
+        avg_b /= data.length;
+
+        return [ parseInt( avg_r ),
+                 parseInt( avg_g ),
+                 parseInt( avg_b ) ];
 
     },
 
@@ -205,7 +226,8 @@ var Box = function() {
             }
         }
 
-        return longest_axis;
+        return { axis   : longest_axis,
+                 length : longest_axis_size };
     };
 
     return {
