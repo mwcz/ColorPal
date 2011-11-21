@@ -42,7 +42,7 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 <script type="text/javascript" src="imagedata_to_rgb.js"> </script>
 <script type="text/javascript">
 
-var ctx, canvas;
+var ctx, canvas, mc;
 
 function handle_file_select( evt ) {
     var files = evt.target.files; // FileList object
@@ -74,9 +74,9 @@ function handle_file_select( evt ) {
 
             var data = ctx.getImageData( 0, 0, img.width, img.height );
             var rgbdata = imagedata_to_rgb( data );
-            var mc = MedianCut();
+            mc = MedianCut();
             mc.init( rgbdata );
-            var palette = mc.get(16);
+            var palette = mc.get_fixed_size_palette(16);
 
             for( var ic = palette.length - 1; ic >= 0; ic-- ) {
                 var color = palette[ic];

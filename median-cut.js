@@ -23,20 +23,62 @@ var MedianCut = function() {
 
     },
 
-    get = function( _number ) {
+    get_longest_box_index = function() {
+
+        // find the box with the longest axis of them all...
+        var longest_box_index = 0;
+
+        for( var box_index = boxes.length - 1; box_index >= 0; --box_index ) {
+            if( boxes[ box_index ] > longest_box_index ) {
+                longest_box_index = boxes[ box_index ];
+            }
+        }
+
+        return longest_box_index;
+
+    },
+
+    get_boxes = function() {
+        return boxes;
+    },
+
+    get_dynamic_size_palette = function( _number ) {
+
+        var values = [];
+        var longest_box_index;
+
+        for( var i = _number - 1; i >= 0; --i ) {
+
+            longest_box_index = get_longest_box_index();
+
+            // remove the longest box and split it
+            var box_to_split = boxes.splice( longest_box_index, 1 )[0];
+            var split_boxes = box_to_split.split();
+            var box1 = split_boxes[0];
+            var box2 = split_boxes[1];
+
+            // then push the resulting boxes into the boxes array
+            boxes.push( box1 );
+            boxes.push( box2 );
+        }
+
+        // palette is complete.  get the average colors from each box
+        // and push them into the values array, then return.
+        for( var i = _number - 1; i >= 0; --i ) {
+            values.push( boxes[i].average() );
+        }
+
+        return values;
+
+    },
+
+    get_fixed_size_palette = function( _number ) {
 
         var values = [];
 
         for( var i = _number - 1; i >= 0; --i ) {
 
-            // find the box with the longest axis of them all...
-            var longest_box_index = 0;
-
-            for( var box_index = boxes.length - 1; box_index >= 0; --box_index ) {
-                if( boxes[ box_index ] > longest_box_index ) {
-                    longest_box_index = boxes[ box_index ];
-                }
-            }
+            longest_box_index = longest_box();
 
             // remove the longest box and split it
             var box_to_split = boxes.splice( longest_box_index, 1 )[0];
@@ -60,8 +102,9 @@ var MedianCut = function() {
     };
 
     return {
-        init : init,
-        get : get
+        init                   : init,
+        get_fixed_size_palette : get_fixed_size_palette,
+        get_boxes              : get_boxes
     };
 };
 
@@ -126,7 +169,7 @@ var Box = function() {
         // represents steps 2 and 3 of the algorithm, as written at the top 
         // of this file.
 
-        if( data.length <  0 ) console.error( "can't split; box is fucked! (box has less than 0 length)" );
+        if( data.length <  0 ) console.error( "can't split; box is screwed up. (box has less than 0 length)" );
         if( data.length == 0 ) console.error( "can't split; box is empty!" );
         if( data.length == 1 ) console.error( "can't split; box has one element!" );
 
@@ -181,6 +224,17 @@ var Box = function() {
 
     },
 
+    /*
+    get_deviation = function() {
+        // returns the amount of variation between the colors in this
+        // box.  I'm still not sure which method of comparison to use.
+        // perhaps convert from RGB to LAB and use a LAB comparison
+        // algorithm.
+        
+        return 0;
+    },
+    */
+
     bounding_box = function() {
         // Getter for the bounding box
         return box;
@@ -226,6 +280,11 @@ var Box = function() {
             }
         }
 
+        if( longest_axis < 0 || longest_axis > 2 ) {
+            console.error("SHIT!");
+            console.error("axis is %d", longest_axis);
+        }
+
         return { axis   : longest_axis,
                  length : longest_axis_size };
     };
@@ -235,7 +294,7 @@ var Box = function() {
         /**/ // this stuff will be private; only public for debugging
         split                  : split,
         get_data               : get_data,
-        median_pos                 : median_pos,
+        median_pos             : median_pos,
         bounding_box           : bounding_box,
         calculate_bounding_box : calculate_bounding_box,
         get_longest_axis       : get_longest_axis,
