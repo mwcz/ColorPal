@@ -9,31 +9,57 @@
 <meta name="settings" content="use_css,pre_wrap,expand_tabs">
 <style type="text/css">
 <!--
-pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
+pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; }
 body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 
 #colorpal_canvas { 
-    border: 3px dotted #888;
+    border: 3px solid #000;
     width: 400px;
     height: 300px;
     margin: 0 20px;
-}
+    clear: both;
 
-#colorpal_canvas
-{
     -webkit-transition: all 0.33s ease-in; /* Safari and Chrome */
        -moz-transition: all 0.33s ease-in; /* Firefox 4 */
          -o-transition: all 0.33s ease-in; /* Opera */
             transition: all 0.33s ease-in;
 }
 
-#swatches { line-height: 0; }
+#swatches {
+    line-height: 0;
+    border: 1px solid black;
+    height: 66px;
+    background: grey;
+    position: relative;
+
+    -webkit-transition : top ease 0.2s;
+       -moz-transition : top ease 0.2s;
+         -o-transition : top ease 0.2s;
+            transition : top ease 0.2s;
+
+    -webkit-border-radius: 6px;
+       -moz-border-radius: 6px;
+         -o-border-radius: 6px;
+            border-radius: 6px;
+}
 
 .swatch {
-    display: block;
-    float: left;
-    width: 30px;
-    height: 30px;
+    display : block;
+    float   : left;
+    width   : 50px;
+    height  : 50px;
+    margin  : 8px;
+    border  : 1px solid black;
+
+    -webkit-box-shadow : 0px 0px 9px 0px rgba( 0, 0, 0, 0.8 );
+       -moz-box-shadow : 0px 0px 9px 0px rgba( 0, 0, 0, 0.8 );
+         -o-box-shadow : 0px 0px 9px 0px rgba( 0, 0, 0, 0.8 );
+            box-shadow : 0px 0px 9px 0px rgba( 0, 0, 0, 0.8 );
+
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+         -o-border-radius: 3px;
+            border-radius: 3px;
 }
 -->
 </style>
@@ -55,8 +81,9 @@ function handle_file_select( evt ) {
             continue;
         }
 
-        var reader = new FileReader();
-        var img    = document.createElement("img");
+        var reader   = new FileReader();
+        var img      = document.createElement("img");
+        var swatches = document.getElementById("swatches")
 
         img.onload = function() {
 
@@ -76,13 +103,19 @@ function handle_file_select( evt ) {
             var rgbdata = imagedata_to_rgb( data );
             mc = MedianCut();
             mc.init( rgbdata );
-            var palette = mc.get_fixed_size_palette(16);
+            var palette = mc.get_dynamic_size_palette(48);
+
+            // clear any previous swatches
+            //swatches.clear();
 
             for( var ic = palette.length - 1; ic >= 0; ic-- ) {
                 var color = palette[ic];
-                document.getElementById( "swatch" + ic ).style.backgroundColor = "rgb(" + parseInt(color[0]) + "," + parseInt(color[1]) + "," + parseInt(color[2]) + ")";
-                console.log( ic, color );
-                //console.log( document.getElementById( "swatch" + ic ).style.backgroundColor );
+                var sp = document.createElement("span");
+                sp.setAttribute( "id", "swatch" + ic );
+                sp.setAttribute( "class", "swatch" );
+                sp.onclick = function() { document.body.style.backgroundColor = this.style.backgroundColor; };
+                sp.style.backgroundColor = "rgb(" + parseInt(color[0]) + "," + parseInt(color[1]) + "," + parseInt(color[2]) + ")";
+                swatches.appendChild( sp );
             }
 
 
@@ -116,31 +149,12 @@ window.onload = function() {
 
 <h1>HTML5 local file upload demo</h1>
 
-<p>choose an image from your local filesystem.  it will be drawn in a canvas element below.</p>
-
 <input type="file" id="colorpal_input_image"></input>
 
 <div id="list"></div>
 
 
 <div id="swatches">
-
-    <span id="swatch0" class="swatch"></span>
-    <span id="swatch1" class="swatch"></span>
-    <span id="swatch2" class="swatch"></span>
-    <span id="swatch3" class="swatch"></span>
-    <span id="swatch4" class="swatch"></span>
-    <span id="swatch5" class="swatch"></span>
-    <span id="swatch6" class="swatch"></span>
-    <span id="swatch7" class="swatch"></span>
-    <span id="swatch8" class="swatch"></span>
-    <span id="swatch9" class="swatch"></span>
-    <span id="swatch10" class="swatch"></span>
-    <span id="swatch11" class="swatch"></span>
-    <span id="swatch12" class="swatch"></span>
-    <span id="swatch13" class="swatch"></span>
-    <span id="swatch14" class="swatch"></span>
-    <span id="swatch15" class="swatch"></span>
 
 </div>
 

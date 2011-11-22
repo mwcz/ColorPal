@@ -42,10 +42,44 @@ var MedianCut = function() {
         return boxes;
     },
 
-    get_dynamic_size_palette = function( _number ) {
+    get_dynamic_size_palette = function( _threshold ) {
+
+        var values = [],
+            i,
+            longest_box_index = get_longest_box_index(),
+            longest_axis      = boxes[ longest_box_index ].get_longest_axis();
+
+        do {
+
+            // remove the longest box and split it
+            var box_to_split = boxes.splice( longest_box_index, 1 )[0];
+            var split_boxes = box_to_split.split();
+            var box1 = split_boxes[0];
+            var box2 = split_boxes[1];
+
+            // then push the resulting boxes into the boxes array
+            boxes.push( box1 );
+            boxes.push( box2 );
+
+            longest_box_index = get_longest_box_index()
+            longest_axis      = boxes[ longest_box_index ].get_longest_axis();
+
+        }
+        while( longest_axis.length > _threshold );
+
+        // palette is complete.  get the average colors from each box
+        // and push them into the values array, then return.
+        for( var i = boxes.length - 1; i >= 0; --i ) {
+            values.push( boxes[i].average() );
+        }
+
+        return values;
+
+    },
+
+    get_fixed_size_palette = function( _number ) {
 
         var values = [];
-        var longest_box_index;
 
         for( var i = _number - 1; i >= 0; --i ) {
 
@@ -70,41 +104,13 @@ var MedianCut = function() {
 
         return values;
 
-    },
-
-    get_fixed_size_palette = function( _number ) {
-
-        var values = [];
-
-        for( var i = _number - 1; i >= 0; --i ) {
-
-            longest_box_index = longest_box();
-
-            // remove the longest box and split it
-            var box_to_split = boxes.splice( longest_box_index, 1 )[0];
-            var split_boxes = box_to_split.split();
-            var box1 = split_boxes[0];
-            var box2 = split_boxes[1];
-
-            // then push the resulting boxes into the boxes array
-            boxes.push( box1 );
-            boxes.push( box2 );
-        }
-
-        // palette is complete.  get the average colors from each box
-        // and push them into the values array, then return.
-        for( var i = _number - 1; i >= 0; --i ) {
-            values.push( boxes[i].average() );
-        }
-
-        return values;
-
     };
 
     return {
-        init                   : init,
-        get_fixed_size_palette : get_fixed_size_palette,
-        get_boxes              : get_boxes
+        init                     : init,
+        get_fixed_size_palette   : get_fixed_size_palette,
+        get_dynamic_size_palette : get_dynamic_size_palette,
+        get_boxes                : get_boxes
     };
 };
 
@@ -235,7 +241,7 @@ var Box = function() {
     },
     */
 
-    bounding_box = function() {
+    get_bounding_box = function() {
         // Getter for the bounding box
         return box;
     },
@@ -295,7 +301,7 @@ var Box = function() {
         split                  : split,
         get_data               : get_data,
         median_pos             : median_pos,
-        bounding_box           : bounding_box,
+        get_bounding_box       : get_bounding_box,
         calculate_bounding_box : calculate_bounding_box,
         get_longest_axis       : get_longest_axis,
         sort                   : sort,
