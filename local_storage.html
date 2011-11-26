@@ -12,6 +12,14 @@
 pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; }
 body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 
+[draggable] {
+    -webkit-user-selectable: none;
+     -khtml-user-selectable: none;
+       -moz-user-selectable: none;
+         -o-user-selectable: none;
+            user-selectable: none;
+}
+
 #colorpal_canvas { 
     border: 3px solid #000;
     width: 400px;
@@ -68,10 +76,34 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 <script type="text/javascript" src="imagedata_to_rgb.js"> </script>
 <script type="text/javascript">
 
-var ctx, canvas, mc;
+var ctx,
+    ctx_small,
+    canvas,
+    canvas_small,
+    mc,
+    img_display_height = 500,
+    img_display_width  = 500,
+    canvas_small_height = 128,
+    canvas_small_width = 128;
+
+// Creates a swatch element with a given number and color
+// Swatches have IDs "swatch1", "swatch2", etc.
+// Clicking a swatch sets the body's bg color to the swatch's bg color
+function create_swatch( _num, _color ) {
+    var swatch = document.createElement("span");
+    swatch.setAttribute( "id", "swatch" + _num );
+    swatch.setAttribute( "class", "swatch" );
+    swatch.onclick = function() { document.body.style.backgroundColor = this.style.backgroundColor; };
+    swatch.style.backgroundColor = "rgb(" + parseInt(_color[0]) + "," + parseInt(_color[1]) + "," + parseInt(_color[2]) + ")";
+    return swatch;
+}
 
 function handle_file_select( evt ) {
-    var files = evt.target.files; // FileList object
+
+    if( evt.stopPropagation ) evt.stopPropagation();
+    if( evt.preventDefault  ) evt.preventDefault();
+
+    var files = evt.dataTransfer.files; // FileList object
 
     // Loop through the FileList and render image files as thumbnails.
     for ( var i = 0, f; f = files[i]; i++ ) {
@@ -81,40 +113,38 @@ function handle_file_select( evt ) {
             continue;
         }
 
-        var reader   = new FileReader();
-        var img      = document.createElement("img");
-        var swatches = document.getElementById("swatches")
+        var reader    = new FileReader();
+        var img       = document.createElement("img"); // display-size image
+        var img_small = document.createElement("img"); // smaller image for faster median cut
+        var swatches  = document.getElementById("swatches")
 
         img.onload = function() {
 
             // Resize the canvas to the image size
-            canvas.width             = img.width;
-            canvas.height            = img.height;
+            canvas.width             = img_display_width;
+            canvas.height            = img_display_height;
 
             // Resize the canvas with CSS to trigger CSS3 transitions
-            canvas.style.width       = img.width + "px";
-            canvas.style.height      = img.height + "px";
+            canvas.style.width       = img_display_width + "px";
+            canvas.style.height      = img_display_height + "px";
             canvas.style.borderStyle = "solid";
 
             // Draw the image inside the canvas
-            ctx.drawImage(img, 0, 0, img.width, img.height);
+            ctx.drawImage(       img, 0, 0, img_display_width, img_display_height );
+            ctx_small.drawImage( img, 0, 0, canvas_small_width, canvas_small_height );
 
-            var data = ctx.getImageData( 0, 0, img.width, img.height );
+            var data = ctx_small.getImageData( 0, 0, canvas_small_width, canvas_small_height );
             var rgbdata = imagedata_to_rgb( data );
             mc = MedianCut();
             mc.init( rgbdata );
             var palette = mc.get_dynamic_size_palette(48);
 
             // clear any previous swatches
-            //swatches.clear();
+            swatches.innerHTML = "";
 
             for( var ic = palette.length - 1; ic >= 0; ic-- ) {
                 var color = palette[ic];
-                var sp = document.createElement("span");
-                sp.setAttribute( "id", "swatch" + ic );
-                sp.setAttribute( "class", "swatch" );
-                sp.onclick = function() { document.body.style.backgroundColor = this.style.backgroundColor; };
-                sp.style.backgroundColor = "rgb(" + parseInt(color[0]) + "," + parseInt(color[1]) + "," + parseInt(color[2]) + ")";
+                var sp = create_swatch( ic, color );
                 swatches.appendChild( sp );
             }
 
@@ -133,10 +163,71 @@ function handle_file_select( evt ) {
     }
 }
 
+
+// Drag and drop event handlers
+function file_drag_start( e ) {
+
+    if( e.stopPropagation ) {
+        e.stopPropagation()
+    }
+
+    return false;
+}
+
+function file_drag_enter( e ) {
+}
+
+function file_drag_over ( e ) {
+    e.stopPropagation();
+    e.preventDefault();
+    e.dataTransfer.dropEffect="copy";
+}
+
+function file_drag_leave( e ) {
+}
+
+function file_drop      ( e ) {
+
+    console.log("file drop");
+    
+    e.stopPropagation();
+    e.preventDefault();
+
+    var files = e.dataTransfer.files;
+    for( var i = 0, f; f = files[i]; i++ ) {
+        console.log( f );
+    }
+
+}
+
+function file_drag_end  ( e ) {
+}
+
+
+
+
+
 window.onload = function() {
     document.getElementById("colorpal_input_image").onchange = handle_file_select;
-    canvas = document.getElementById("colorpal_canvas");
-    ctx = canvas.getContext("2d");
+
+    canvas              = document.getElementById("colorpal_canvas");
+
+    canvas_small        = document.createElement("canvas");
+    canvas_small.width  = canvas_small_width;
+    canvas_small.height = canvas_small_height;
+
+    ctx                 = canvas.getContext("2d");
+    ctx_small           = canvas_small.getContext("2d");
+
+    // Set up drag handles
+    var file_input = document.getElementById("colorpal_canvas");
+    file_input.addEventListener( "dragstart", file_drag_start   , false );
+    file_input.addEventListener( "dragenter", file_drag_enter   , false );
+    file_input.addEventListener( "dragover" , file_drag_over    , false );
+    file_input.addEventListener( "dragleave", file_drag_leave   , false );
+    file_input.addEventListener( "drop"     , handle_file_select, false );
+    file_input.addEventListener( "dragend"  , file_drag_end     , false );
+
 };
 
 
@@ -146,8 +237,6 @@ window.onload = function() {
 </head>
 <body>
 <pre>
-
-<h1>HTML5 local file upload demo</h1>
 
 <input type="file" id="colorpal_input_image"></input>
 
