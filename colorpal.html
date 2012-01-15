@@ -7,10 +7,28 @@
 <meta name="plugin-version" content="vim7.3_v10">
 <meta name="syntax" content="html">
 <meta name="settings" content="use_css,pre_wrap,expand_tabs">
+<link href="http://fonts.googleapis.com/css?family=Titan+One" rel="stylesheet" type="text/css">
+<link href="css/960_24_col.css" rel="stylesheet" type="text/css">
 <style type="text/css">
 <!--
 pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; }
-body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
+body { font-family: Verdana, sans-serif; cursive; color: #fff; background-color: #000; }
+h1,
+p.instructions {
+    font-family : 'Titan One';
+    font-weight : 400;
+}
+h1 {
+    font-size   : 3em;
+}
+p.instructions {
+    font-size   : 2em;
+}
+p.credits {
+}
+img.logo {
+    float: left;
+}
 
 [draggable] {
     -webkit-user-selectable: none;
@@ -20,12 +38,16 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
             user-selectable: none;
 }
 
+.container {
+    margin-top: 20px;
+}
+
 #colorpal_canvas { 
-    border: 3px solid #000;
-    width: 400px;
-    height: 300px;
-    margin: 0 20px;
-    clear: both;
+
+    -webkit-border-radius: 14px;
+       -moz-border-radius: 14px;
+         -o-border-radius: 14px;
+            border-radius: 14px;
 
     -webkit-transition: all 0.33s ease-in; /* Safari and Chrome */
        -moz-transition: all 0.33s ease-in; /* Firefox 4 */
@@ -34,11 +56,11 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
 }
 
 .swatches {
-    line-height: 0;
-    border: 1px solid black;
-    height: 66px;
-    background: grey;
-    position: relative;
+    line-height : 0;
+    border      : 1px solid black;
+    height      : 66px;
+    background  : grey;
+    position    : relative;
 
     -webkit-transition : top ease 0.2s;
        -moz-transition : top ease 0.2s;
@@ -81,8 +103,8 @@ var ctx,
     canvas,
     canvas_small,
     mc,
-    img_display_height = 500,
-    img_display_width  = 500,
+    img_max_height = 800,
+    img_max_width  = 600,
     canvas_small_height = 128,
     canvas_small_width = 128;
 
@@ -116,45 +138,35 @@ function handle_file_select( evt ) {
         var reader    = new FileReader();
         var img       = document.createElement("img"); // display-size image
         var img_small = document.createElement("img"); // smaller image for faster median cut
-        var swatchesd = document.getElementById("swatches_d")
-        var swatchess = document.getElementById("swatches_s")
+        var swatches = document.getElementById("swatches");
 
         img.onload = function() {
 
             // Resize the canvas to the image size
-            canvas.width             = img_display_width;
-            canvas.height            = img_display_height;
+            canvas.width             = img_max_width;
+            canvas.height            = img_max_height;
 
             // Resize the canvas with CSS to trigger CSS3 transitions
-            canvas.style.width       = img_display_width + "px";
-            canvas.style.height      = img_display_height + "px";
-            canvas.style.borderStyle = "solid";
+            canvas.style.width       = img_max_width + "px";
+            canvas.style.height      = img_max_height + "px";
 
             // Draw the image inside the canvas
-            ctx.drawImage(       img, 0, 0, img_display_width, img_display_height );
+            ctx.drawImage(       img, 0, 0, img_max_width, img_max_height );
             ctx_small.drawImage( img, 0, 0, canvas_small_width, canvas_small_height );
 
             var data = ctx_small.getImageData( 0, 0, canvas_small_width, canvas_small_height );
             var rgbdata = imagedata_to_rgb( data );
             mc = MedianCut();
             mc.init( rgbdata );
-            var palette_dynamic = mc.get_dynamic_size_palette( 0.618 );
-            var palette_static  = mc.get_fixed_size_palette( 8 );
+            var palette = mc.get_fixed_size_palette( 8 );
 
             // clear any previous swatches
-            swatchesd.innerHTML = "";
-            swatchess.innerHTML = "";
+            swatches.innerHTML = "";
 
-            for( var ic = palette_dynamic.length - 1; ic >= 0; ic-- ) {
-                var color = palette_dynamic[ic];
+            for( var ic = palette.length - 1; ic >= 0; ic-- ) {
+                var color = palette[ic];
                 var sp = create_swatch( ic, color );
-                swatchesd.appendChild( sp );
-            }
-
-            for( var ic = palette_static.length - 1; ic >= 0; ic-- ) {
-                var color = palette_static[ic];
-                var sp = create_swatch( ic, color );
-                swatchess.appendChild( sp );
+                swatches.appendChild( sp );
             }
 
 
@@ -245,19 +257,29 @@ window.onload = function() {
 
 </head>
 <body>
-<pre>
 
-<input type="file" id="colorpal_input_image"></input>
+<div class="container_24 container">
 
-<div id="list"></div>
+    <img class="grid_3" src="images/logo.png" alt="ColorPal logo" />
+    <h1 class="grid_11">ColorPal!</h1>
+    <p class="grid_10">Want to generate a color palette from an image?  Drag and drop it below. :)</p>
+
+    <div class="clear"></div>
+
+    <input type="file" id="colorpal_input_image"></input>
+
+    <div id="list"></div>
 
 
-<div class="swatches" id="swatches_d"></div>
-<div class="swatches" id="swatches_s"></div>
+    <div class="swatches" id="swatches"></div>
 
-<canvas id="colorpal_canvas"></canvas>
+    <canvas id="colorpal_canvas" class="grid_16"></canvas>
+    <p class="instructions grid_6 pull_11">Drop your image here!</p>
 
-</pre>
+    <p class="credits grid_24"><a href="http://mwcz.org">Author</a>  <a href="https://github.com/mwcz/ColorPal">Code</a>  <a href="https://twitter.com/mwcz">Twitter</a></p>
+
+</div> <!-- /.container_24 -->
+
 </body>
 </html>
 
