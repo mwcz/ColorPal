@@ -33,7 +33,7 @@ body { font-family: monospace; color: #d7d7d7; background-color: #1c1c1c; }
             transition: all 0.33s ease-in;
 }
 
-#swatches {
+.swatches {
     line-height: 0;
     border: 1px solid black;
     height: 66px;
@@ -116,7 +116,8 @@ function handle_file_select( evt ) {
         var reader    = new FileReader();
         var img       = document.createElement("img"); // display-size image
         var img_small = document.createElement("img"); // smaller image for faster median cut
-        var swatches  = document.getElementById("swatches")
+        var swatchesd = document.getElementById("swatches_d")
+        var swatchess = document.getElementById("swatches_s")
 
         img.onload = function() {
 
@@ -137,15 +138,23 @@ function handle_file_select( evt ) {
             var rgbdata = imagedata_to_rgb( data );
             mc = MedianCut();
             mc.init( rgbdata );
-            var palette = mc.get_dynamic_size_palette(48);
+            var palette_dynamic = mc.get_dynamic_size_palette( 0.618 );
+            var palette_static  = mc.get_fixed_size_palette( 8 );
 
             // clear any previous swatches
-            swatches.innerHTML = "";
+            swatchesd.innerHTML = "";
+            swatchess.innerHTML = "";
 
-            for( var ic = palette.length - 1; ic >= 0; ic-- ) {
-                var color = palette[ic];
+            for( var ic = palette_dynamic.length - 1; ic >= 0; ic-- ) {
+                var color = palette_dynamic[ic];
                 var sp = create_swatch( ic, color );
-                swatches.appendChild( sp );
+                swatchesd.appendChild( sp );
+            }
+
+            for( var ic = palette_static.length - 1; ic >= 0; ic-- ) {
+                var color = palette_static[ic];
+                var sp = create_swatch( ic, color );
+                swatchess.appendChild( sp );
             }
 
 
@@ -243,9 +252,8 @@ window.onload = function() {
 <div id="list"></div>
 
 
-<div id="swatches">
-
-</div>
+<div class="swatches" id="swatches_d"></div>
+<div class="swatches" id="swatches_s"></div>
 
 <canvas id="colorpal_canvas"></canvas>
 

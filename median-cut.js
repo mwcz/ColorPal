@@ -44,10 +44,15 @@ var MedianCut = function() {
 
     get_dynamic_size_palette = function( _threshold ) {
 
+        // threshold is a value in (0,1] that influences how many colors
+        // will be in the resulting palette.  lower values of threshold
+        // will result in a smaller palette size.
+
         var values = [],
             i,
             longest_box_index = get_longest_box_index(),
-            longest_axis      = boxes[ longest_box_index ].get_longest_axis();
+            longest_axis      = boxes[ longest_box_index ].get_longest_axis(),
+            max_box_length    = longest_axis.length * ( 1 - _threshold );
 
         do {
 
@@ -65,7 +70,7 @@ var MedianCut = function() {
             longest_axis      = boxes[ longest_box_index ].get_longest_axis();
 
         }
-        while( longest_axis.length > _threshold );
+        while( longest_axis.length > max_box_length );
 
         // palette is complete.  get the average colors from each box
         // and push them into the values array, then return.
@@ -107,10 +112,13 @@ var MedianCut = function() {
     };
 
     return {
+        // This is a private function (listed here in case it needs to be made public easily :) 
+        //get_boxes                : get_boxes
+
+        // These are exposed (public) functions
         init                     : init,
         get_fixed_size_palette   : get_fixed_size_palette,
         get_dynamic_size_palette : get_dynamic_size_palette,
-        get_boxes                : get_boxes
     };
 };
 
@@ -230,17 +238,6 @@ var Box = function() {
 
     },
 
-    /*
-    get_deviation = function() {
-        // returns the amount of variation between the colors in this
-        // box.  I'm still not sure which method of comparison to use.
-        // perhaps convert from RGB to LAB and use a LAB comparison
-        // algorithm.
-        
-        return 0;
-    },
-    */
-
     get_bounding_box = function() {
         // Getter for the bounding box
         return box;
@@ -286,29 +283,25 @@ var Box = function() {
             }
         }
 
-        if( longest_axis < 0 || longest_axis > 2 ) {
-            console.error("SHIT!");
-            console.error("axis is %d", longest_axis);
-        }
-
         return { axis   : longest_axis,
                  length : longest_axis_size };
     };
 
     return {
 
-        /**/ // this stuff will be private; only public for debugging
-        split                  : split,
-        get_data               : get_data,
-        median_pos             : median_pos,
-        get_bounding_box       : get_bounding_box,
-        calculate_bounding_box : calculate_bounding_box,
-        get_longest_axis       : get_longest_axis,
-        sort                   : sort,
-        get_comparison_func    : get_comparison_func,
-        average                : average,
+        /**/ // these are private functions
+        //get_data               : get_data,
+        //median_pos             : median_pos,
+        //get_bounding_box       : get_bounding_box,
+        //calculate_bounding_box : calculate_bounding_box,
+        //sort                   : sort,
+        //get_comparison_func    : get_comparison_func,
         /**/
 
-        init : init
+        // These are exposed (public) functions
+        split            : split,
+        get_longest_axis : get_longest_axis,
+        average          : average,
+        init             : init
     };
 };
