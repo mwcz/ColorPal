@@ -8,20 +8,25 @@
 <meta name="syntax" content="html">
 <meta name="settings" content="use_css,pre_wrap,expand_tabs">
 <link href="http://fonts.googleapis.com/css?family=Titan+One" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Ovo'       rel='stylesheet' type='text/css'>
 <link href="css/960_24_col.css" rel="stylesheet" type="text/css">
 <style type="text/css">
 <!--
 pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; }
 body { font-family: Verdana, sans-serif; cursive; color: #fff; background-color: #000; }
 h1,
-p.instructions {
+p.drop_message {
     font-family : 'Titan One';
     font-weight : 400;
+}
+p.instructions {
+    font-family: Ovo;
+    font-size: 1.3em;
 }
 h1 {
     font-size   : 3em;
 }
-p.instructions {
+p.drop_message {
     font-size   : 2em;
 }
 p.credits {
@@ -44,10 +49,10 @@ img.logo {
 
 #colorpal_canvas { 
 
-    -webkit-border-radius: 14px;
-       -moz-border-radius: 14px;
-         -o-border-radius: 14px;
-            border-radius: 14px;
+    outline: 6px solid #999;
+    border: 1px solid #000;
+
+    margin: 24px;
 
     -webkit-transition: all 0.33s ease-in; /* Safari and Chrome */
        -moz-transition: all 0.33s ease-in; /* Firefox 4 */
@@ -55,17 +60,19 @@ img.logo {
             transition: all 0.33s ease-in;
 }
 
+#colorpal_input_image {
+    display: none;
+}
+
 .swatches {
     line-height : 0;
-    border      : 1px solid black;
-    height      : 66px;
-    background  : grey;
+    height      : 0;
     position    : relative;
 
-    -webkit-transition : top ease 0.2s;
-       -moz-transition : top ease 0.2s;
-         -o-transition : top ease 0.2s;
-            transition : top ease 0.2s;
+    -webkit-transition : all ease 0.33s;
+       -moz-transition : all ease 0.33s;
+         -o-transition : all ease 0.33s;
+            transition : all ease 0.33s;
 
     -webkit-border-radius: 6px;
        -moz-border-radius: 6px;
@@ -103,8 +110,8 @@ var ctx,
     canvas,
     canvas_small,
     mc,
-    img_max_height = 800,
-    img_max_width  = 600,
+    img_max_width  = 400,
+    img_max_height = 300,
     canvas_small_height = 128,
     canvas_small_width = 128;
 
@@ -115,7 +122,7 @@ function create_swatch( _num, _color ) {
     var swatch = document.createElement("span");
     swatch.setAttribute( "id", "swatch" + _num );
     swatch.setAttribute( "class", "swatch" );
-    swatch.onclick = function() { document.body.style.backgroundColor = this.style.backgroundColor; };
+    swatch.onclick = function() { document.getElementById("colorpal_canvas").style.outline = "6px solid " + this.style.backgroundColor; };
     swatch.style.backgroundColor = "rgb(" + parseInt(_color[0]) + "," + parseInt(_color[1]) + "," + parseInt(_color[2]) + ")";
     return swatch;
 }
@@ -135,10 +142,11 @@ function handle_file_select( evt ) {
             continue;
         }
 
-        var reader    = new FileReader();
-        var img       = document.createElement("img"); // display-size image
-        var img_small = document.createElement("img"); // smaller image for faster median cut
-        var swatches = document.getElementById("swatches");
+        var reader       = new FileReader();
+        var img          = document.createElement("img"); // display-size image
+        var img_small    = document.createElement("img"); // smaller image for faster median cut
+        var swatches     = document.getElementById("swatches");
+        var drop_message = document.getElementById("drop_message");
 
         img.onload = function() {
 
@@ -151,7 +159,7 @@ function handle_file_select( evt ) {
             canvas.style.height      = img_max_height + "px";
 
             // Draw the image inside the canvas
-            ctx.drawImage(       img, 0, 0, img_max_width, img_max_height );
+            ctx.drawImage(       img, 0, 0, img.width, img.height );
             ctx_small.drawImage( img, 0, 0, canvas_small_width, canvas_small_height );
 
             var data = ctx_small.getImageData( 0, 0, canvas_small_width, canvas_small_height );
@@ -168,6 +176,9 @@ function handle_file_select( evt ) {
                 var sp = create_swatch( ic, color );
                 swatches.appendChild( sp );
             }
+
+            swatches.style.height = "66px";
+            drop_message.style.visibility = "hidden";
 
 
         };
@@ -202,9 +213,14 @@ function file_drag_over ( e ) {
     e.stopPropagation();
     e.preventDefault();
     e.dataTransfer.dropEffect="copy";
+    canvas.style.outline = "6px solid #fff";
 }
 
 function file_drag_leave( e ) {
+    e.stopPropagation();
+    e.preventDefault();
+    e.dataTransfer.dropEffect="copy";
+    canvas.style.outline = "6px solid #999";
 }
 
 function file_drop      ( e ) {
@@ -249,6 +265,10 @@ window.onload = function() {
     file_input.addEventListener( "drop"     , handle_file_select, false );
     file_input.addEventListener( "dragend"  , file_drag_end     , false );
 
+    var drop_message = document.getElementById("drop_message");
+    drop_message.addEventListener( "start"  , file_drag_end     , false );
+
+
 };
 
 
@@ -262,7 +282,7 @@ window.onload = function() {
 
     <img class="grid_3" src="images/logo.png" alt="ColorPal logo" />
     <h1 class="grid_11">ColorPal!</h1>
-    <p class="grid_10">Want to generate a color palette from an image?  Drag and drop it below. :)</p>
+    <p class="grid_10 instructions">Want to generate a color palette from an image?  Drag and drop it below. :)</p>
 
     <div class="clear"></div>
 
@@ -273,8 +293,10 @@ window.onload = function() {
 
     <div class="swatches" id="swatches"></div>
 
+    <div class="clear"></div>
+
     <canvas id="colorpal_canvas" class="grid_16"></canvas>
-    <p class="instructions grid_6 pull_11">Drop your image here!</p>
+    <p id="drop_message" class="drop_message grid_6 pull_11">Drop your image here!</p>
 
     <p class="credits grid_24"><a href="http://mwcz.org">Author</a>  <a href="https://github.com/mwcz/ColorPal">Code</a>  <a href="https://twitter.com/mwcz">Twitter</a></p>
 
