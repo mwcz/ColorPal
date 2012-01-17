@@ -1,0 +1,3 @@
+[submodule "median-cut.js"]
+	path = median-cut.js
+	url = git://github.com/mwcz/median-cut-js.git
