@@ -14,8 +14,7 @@
 <!--
 pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; }
 body { font-family: Verdana, sans-serif; cursive; color: #fff; background-color: #000; }
-h1,
-p.drop_message {
+h1 {
     font-family : 'Titan One';
     font-weight : 400;
 }
@@ -110,8 +109,10 @@ var ctx,
     canvas,
     canvas_small,
     mc,
-    img_max_width  = 400,
-    img_max_height = 300,
+    img_width  = 0,
+    img_height = 0,
+    canvas_width  = 400,
+    canvas_height = 400,
     canvas_small_height = 128,
     canvas_small_width = 128;
 
@@ -150,16 +151,31 @@ function handle_file_select( evt ) {
 
         img.onload = function() {
 
+            var img_ratio     = img.width / img.height;
+            var canvas_height = 400;
+            var canvas_width  = 400;
+
+            /*
+            if( img_ratio > 1 ) { 
+                // width > height
+                if( img.width > canvas_width ) {
+                    canvas_height = img.height
+                }
+            } else {
+                // height > width
+            }
+            */
+            canvas_width  = ( img.width  > canvas_width  ) ? ( img_ratio > 1 ) ? canvas_width  : canvas_width*img_ratio  : img.width;
+            canvas_height = ( img.height > canvas_height ) ? ( img_ratio < 1 ) ? canvas_height : canvas_height/img_ratio : img.height;
             // Resize the canvas to the image size
-            canvas.width             = img_max_width;
-            canvas.height            = img_max_height;
+            canvas.width             = canvas_width;
+            canvas.height            = canvas_height;
 
             // Resize the canvas with CSS to trigger CSS3 transitions
-            canvas.style.width       = img_max_width + "px";
-            canvas.style.height      = img_max_height + "px";
+            canvas.style.width       = canvas_width + "px";
+            canvas.style.height      = canvas_height + "px";
 
-            // Draw the image inside the canvas
-            ctx.drawImage(       img, 0, 0, img.width, img.height );
+            // Draw the downsized image inside the canvas
             ctx_small.drawImage( img, 0, 0, canvas_small_width, canvas_small_height );
 
             var data = ctx_small.getImageData( 0, 0, canvas_small_width, canvas_small_height );
@@ -178,8 +194,9 @@ function handle_file_select( evt ) {
             }
 
             swatches.style.height = "66px";
-            drop_message.style.visibility = "hidden";
 
+            // Draw the display image
+            ctx.drawImage(       img, 0, 0, canvas_width, canvas_height );
 
         };
 
@@ -265,9 +282,6 @@ window.onload = function() {
     file_input.addEventListener( "drop"     , handle_file_select, false );
     file_input.addEventListener( "dragend"  , file_drag_end     , false );
 
-    var drop_message = document.getElementById("drop_message");
-    drop_message.addEventListener( "start"  , file_drag_end     , false );
-
 
 };
 
@@ -282,7 +296,11 @@ window.onload = function() {
 
     <img class="grid_3" src="images/logo.png" alt="ColorPal logo" />
     <h1 class="grid_11">ColorPal!</h1>
-    <p class="grid_10 instructions">Want to generate a color palette from an image?  Drag and drop it below. :)</p>
+    <p class="grid_10 instructions">
+        Want to generate a color palette from an image?  
+        <br />
+        Drag and drop it in the box below. :)
+    </p>
 
     <div class="clear"></div>
 
@@ -296,7 +314,6 @@ window.onload = function() {
     <div class="clear"></div>
 
     <canvas id="colorpal_canvas" class="grid_16"></canvas>
-    <p id="drop_message" class="drop_message grid_6 pull_11">Drop your image here!</p>
 
     <p class="credits grid_24"><a href="http://mwcz.org">Author</a>  <a href="https://github.com/mwcz/ColorPal">Code</a>  <a href="https://twitter.com/mwcz">Twitter</a></p>
 
