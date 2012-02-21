@@ -10,6 +10,13 @@
 <link href="http://fonts.googleapis.com/css?family=Titan+One" rel="stylesheet" type="text/css">
 <link href='http://fonts.googleapis.com/css?family=Ovo'       rel='stylesheet' type='text/css'>
 <link href="css/960_24_col.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="includes/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="includes/jquery.tmpl.js"></script>
+<script type="text/javascript" src="includes/knockout-2.0.0.debug.js"></script>
+<script type="text/javascript" src="includes/farbtastic/farbtastic.js"></script>
+<link rel="stylesheet" href="includes/farbtastic/farbtastic.css" type="text/css" />
+
 <style type="text/css">
 <!--
 pre { white-space: pre-wrap; font-family: monospace; color: #d7d7d7; }
@@ -18,6 +25,8 @@ h1 {
     font-family : 'Titan One';
     font-weight : 400;
 }
+a { color: #ddd; }
+a:visited { color: #999; }
 p.instructions {
     font-family: Ovo;
     font-size: 1.3em;
@@ -62,7 +71,7 @@ img.logo {
 
 .cp-swatches {
     line-height : 0;
-    height      : 0;
+    height: 66px;
     position    : relative;
 
     -webkit-transition : all ease 0.33s;
@@ -70,29 +79,25 @@ img.logo {
          -o-transition : all ease 0.33s;
             transition : all ease 0.33s;
 
-    -webkit-border-radius: 6px;
-       -moz-border-radius: 6px;
-         -o-border-radius: 6px;
-            border-radius: 6px;
 }
 
-.swatch {
+.cp-swatch {
     display : block;
     float   : left;
-    width   : 50px;
-    height  : 50px;
-    margin  : 8px;
-    border  : 1px solid black;
+    width   : 80px;
+    height  : 80px;
 
-    -webkit-box-shadow : 0px 0px 9px 0px rgba( 0, 0, 0, 0.8 );
-       -moz-box-shadow : 0px 0px 9px 0px rgba( 0, 0, 0, 0.8 );
-         -o-box-shadow : 0px 0px 9px 0px rgba( 0, 0, 0, 0.8 );
-            box-shadow : 0px 0px 9px 0px rgba( 0, 0, 0, 0.8 );
+    -webkit-border-radius: 2px;
+       -moz-border-radius: 2px;
+         -o-border-radius: 2px;
+            border-radius: 2px;
+}
 
-    -webkit-border-radius: 3px;
-       -moz-border-radius: 3px;
-         -o-border-radius: 3px;
-            border-radius: 3px;
+.cp-swatch-selected { border: 1px solid white; }
+
+#cp-picker {
+    position: absolute;
+    right: 10px;
 }
 -->
 </style>
@@ -100,6 +105,47 @@ img.logo {
 <script type="text/javascript" src="median-cut.js/median-cut.js"> </script>
 <script type="text/javascript" src="imagedata_to_rgb.js"> </script>
 <script type="text/javascript">
+
+var farb, pick, selected, CP_ViewModel;
+$(document).ready(function() {
+
+    CP_ViewModel = {
+
+        colors : ko.observableArray( [
+            new CP_Color("#fff"), new CP_Color("#fff"),
+            new CP_Color("#fff"), new CP_Color("#fff"),
+            new CP_Color("#fff"), new CP_Color("#fff"),
+            new CP_Color("#fff"), new CP_Color("#fff"),
+        ]),
+
+    };
+
+    ko.applyBindings( CP_ViewModel );
+
+    farb = $.farbtastic('#cp-picker');
+    pick = $('#cp-picker');
+    selected;
+    $('.cp-swatch')
+        .each(function () { farb.linkTo(this); })
+        .click(function() {
+            if (selected) {
+                $(selected).removeClass('cp-swatch-selected');
+            }
+            farb.linkTo(this);
+            var swatch_color = $(this).css('backgroundColor');
+            swatch_color = swatch_color.slice(4,-1).split(',');
+            swatch_color = [ swatch_color[0], swatch_color[1], swatch_color[2] ];
+            farb.setColor( farb.pack( [ swatch_color[0]/255, swatch_color[1]/255, swatch_color[2]/255 ] ) );
+            console.log( $(this).css('backgroundColor') );
+            $(selected = this).addClass('cp-swatch-selected');
+        });
+
+    function CP_Color( hex ) {
+        return {
+            hex: ko.observable(hex)
+        };
+    }
+});
 
 var ctx,
     ctx_small,
@@ -119,7 +165,7 @@ var ctx,
 function create_swatch( _num, _color ) {
     var swatch = document.createElement("span");
     swatch.setAttribute( "id", "swatch" + _num );
-    swatch.setAttribute( "class", "swatch" );
+    swatch.setAttribute( "class", "cp-swatch" );
     swatch.onclick = function() { document.getElementById("colorpal_canvas").style.outline = "6px solid " + this.style.backgroundColor; };
     swatch.style.backgroundColor = "rgb(" + parseInt(_color[0]) + "," + parseInt(_color[1]) + "," + parseInt(_color[2]) + ")";
     return swatch;
@@ -143,7 +189,6 @@ function handle_file_select( evt ) {
         var reader       = new FileReader();
         var img          = document.createElement("img"); // display-size image
         var img_small    = document.createElement("img"); // smaller image for faster median cut
-        var swatches     = document.getElementById("cp-swatches");
 
         img.onload = function() {
 
@@ -181,18 +226,18 @@ function handle_file_select( evt ) {
             var palette = mc.get_fixed_size_palette( 8 );
 
             // clear any previous swatches
-            swatches.innerHTML = "";
 
             for( var ic = palette.length - 1; ic >= 0; ic-- ) {
                 var color = palette[ic];
-                var sp = create_swatch( ic, color );
-                swatches.appendChild( sp );
+                var hex = farb.pack( [ color[0]/255, color[1]/255, color[2]/255 ] );
+                console.log(hex);
+                CP_ViewModel.colors()[ic].hex(hex);
+                //var sp = create_swatch( ic, color );
+                //swatches.appendChild( sp );
             }
 
-            swatches.style.height = "66px";
-
             // Draw the display image
-            ctx.drawImage(       img, 0, 0, canvas_width, canvas_height );
+            ctx.drawImage( img, 0, 0, canvas_width, canvas_height );
 
         };
 
@@ -295,7 +340,7 @@ window.onload = function() {
     <p class="grid_10 instructions">
         Want to generate a color palette from an image?  
         <br />
-        Drag the image into the box below. :)
+        Drag your image into the box below. :)
     </p>
 
     <div class="clear"></div>
@@ -305,11 +350,26 @@ window.onload = function() {
     <div id="list"></div>
 
 
-    <div class="cp-swatches" id="cp-swatches"></div>
+    <div data-bind="template: { name: 'CP_PaletteTemplate' }"></div>
+
+    <script id="CP_PaletteTemplate" type="text/html">
+        {{each(index,hex) colors}}
+        <div 
+            class="cp-swatch" 
+            id="cp-swatch-${index}" 
+            data-bind="style: { backgroundColor: hex() }"> </div>
+        <input 
+            type="hidden" 
+            data-bind="value: hex"
+            size="7" />
+        {{/each}}
+    </script>
 
     <div class="clear"></div>
 
     <canvas id="colorpal_canvas" class="grid_16"></canvas>
+
+    <div id="cp-picker"></div>
 
     <p class="credits grid_24"><a href="http://mwcz.org">Author</a>  <a href="https://github.com/mwcz/ColorPal">Code</a>  <a href="https://twitter.com/mwcz">Twitter</a></p>
 
