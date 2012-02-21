@@ -25,9 +25,6 @@ p.instructions {
 h1 {
     font-size   : 3em;
 }
-p.drop_message {
-    font-size   : 2em;
-}
 p.credits {
 }
 img.logo {
@@ -59,11 +56,11 @@ img.logo {
             transition: all 0.33s ease-in;
 }
 
-#colorpal_input_image {
+#colorpal-input-image {
     display: none;
 }
 
-.swatches {
+.cp-swatches {
     line-height : 0;
     height      : 0;
     position    : relative;
@@ -146,8 +143,7 @@ function handle_file_select( evt ) {
         var reader       = new FileReader();
         var img          = document.createElement("img"); // display-size image
         var img_small    = document.createElement("img"); // smaller image for faster median cut
-        var swatches     = document.getElementById("swatches");
-        var drop_message = document.getElementById("drop_message");
+        var swatches     = document.getElementById("cp-swatches");
 
         img.onload = function() {
 
@@ -262,7 +258,7 @@ function file_drag_end  ( e ) {
 
 
 window.onload = function() {
-    document.getElementById("colorpal_input_image").onchange = handle_file_select;
+    document.getElementById("colorpal-input-image").onchange = handle_file_select;
 
     canvas              = document.getElementById("colorpal_canvas");
 
@@ -299,17 +295,17 @@ window.onload = function() {
     <p class="grid_10 instructions">
         Want to generate a color palette from an image?  
         <br />
-        Drag and drop it in the box below. :)
+        Drag the image into the box below. :)
     </p>
 
     <div class="clear"></div>
 
-    <input type="file" id="colorpal_input_image"></input>
+    <input type="file" id="colorpal-input-image"></input>
 
     <div id="list"></div>
 
 
-    <div class="swatches" id="swatches"></div>
+    <div class="cp-swatches" id="cp-swatches"></div>
 
     <div class="clear"></div>
 
