@@ -52,7 +52,7 @@ img.logo {
     margin-top: 20px;
 }
 
-#colorpal_canvas { 
+#cp-canvas { 
 
     outline: 6px solid #999;
     border: 1px solid #000;
@@ -65,39 +65,71 @@ img.logo {
             transition: all 0.33s ease-in;
 }
 
-#colorpal-input-image {
+#cp-input-image {
     display: none;
 }
+
+/****************************************
+ * Container for all the color swatches *
+ ****************************************/
 
 .cp-swatches {
     line-height : 0;
     height: 66px;
     position    : relative;
 
-    -webkit-transition : all ease 0.33s;
-       -moz-transition : all ease 0.33s;
-         -o-transition : all ease 0.33s;
-            transition : all ease 0.33s;
+    -webkit-transition : all ease 0.13s;
+       -moz-transition : all ease 0.13s;
+         -o-transition : all ease 0.13s;
+            transition : all ease 0.13s;
 
 }
 
+/*********************************
+ * Styles for the swatch squares *
+ *********************************/
+
 .cp-swatch {
-    display : block;
-    float   : left;
-    width   : 80px;
-    height  : 80px;
+    display  : block;
+    float    : left;
+    position : relative;
+    width    : 80px;
+    height   : 80px;
 
     -webkit-border-radius: 2px;
        -moz-border-radius: 2px;
          -o-border-radius: 2px;
             border-radius: 2px;
+
+    -webkit-transition : all ease 0.33s;
+       -moz-transition : all ease 0.33s;
+         -o-transition : all ease 0.33s;
+            transition : all ease 0.33s;
 }
 
-.cp-swatch-selected { border: 1px solid white; }
+.cp-swatch-selected { 
+    top    : 8px;
+}
+
+/***********************
+ * Color picker styles *
+ ***********************/
 
 #cp-picker {
     position: absolute;
     right: 10px;
+    -webkit-transition : all ease 0.33s;
+       -moz-transition : all ease 0.33s;
+         -o-transition : all ease 0.33s;
+            transition : all ease 0.33s;
+}
+.cp-picker-active {
+    opacity: 1.0;
+    visibility: visible;
+}
+.cp-picker-inactive {
+    opacity: 0;
+    visibility: hidden;
 }
 -->
 </style>
@@ -112,32 +144,45 @@ $(document).ready(function() {
     CP_ViewModel = {
 
         colors : ko.observableArray( [
-            new CP_Color("#fff"), new CP_Color("#fff"),
-            new CP_Color("#fff"), new CP_Color("#fff"),
-            new CP_Color("#fff"), new CP_Color("#fff"),
-            new CP_Color("#fff"), new CP_Color("#fff"),
+            new CP_Color("#000"), new CP_Color("#000"),
+            new CP_Color("#000"), new CP_Color("#000"),
+            new CP_Color("#000"), new CP_Color("#000"),
+            new CP_Color("#000"), new CP_Color("#000"),
         ]),
 
     };
 
     ko.applyBindings( CP_ViewModel );
 
+
     farb = $.farbtastic('#cp-picker');
+    farb.linkTo(function( hex ) {
+        if( selected ) {
+            var swatch_id = $(selected).attr('id').slice(-1);
+            CP_ViewModel.colors()[ swatch_id ].hex( hex );
+        }
+    });
     pick = $('#cp-picker');
     selected;
     $('.cp-swatch')
-        .each(function () { farb.linkTo(this); })
         .click(function() {
             if (selected) {
                 $(selected).removeClass('cp-swatch-selected');
             }
-            farb.linkTo(this);
-            var swatch_color = $(this).css('backgroundColor');
-            swatch_color = swatch_color.slice(4,-1).split(',');
-            swatch_color = [ swatch_color[0], swatch_color[1], swatch_color[2] ];
-            farb.setColor( farb.pack( [ swatch_color[0]/255, swatch_color[1]/255, swatch_color[2]/255 ] ) );
-            console.log( $(this).css('backgroundColor') );
-            $(selected = this).addClass('cp-swatch-selected');
+            if ( selected == this ) {
+                pick.removeClass('cp-picker-active');
+                pick.addClass('cp-picker-inactive');
+                $(this).removeClass('cp-swatch-selected');
+                selected = false;
+            } else {
+
+                var swatch_id = $(this).attr('id').slice(-1);
+                farb.setColor( CP_ViewModel.colors()[ swatch_id ].hex() );
+
+                pick.removeClass('cp-picker-inactive');
+                pick.addClass('cp-picker-active');
+                $(selected = this).addClass('cp-swatch-selected');
+            }
         });
 
     function CP_Color( hex ) {
@@ -158,18 +203,6 @@ var ctx,
     canvas_height = 400,
     canvas_small_height = 128,
     canvas_small_width = 128;
-
-// Creates a swatch element with a given number and color
-// Swatches have IDs "swatch1", "swatch2", etc.
-// Clicking a swatch sets the body's bg color to the swatch's bg color
-function create_swatch( _num, _color ) {
-    var swatch = document.createElement("span");
-    swatch.setAttribute( "id", "swatch" + _num );
-    swatch.setAttribute( "class", "cp-swatch" );
-    swatch.onclick = function() { document.getElementById("colorpal_canvas").style.outline = "6px solid " + this.style.backgroundColor; };
-    swatch.style.backgroundColor = "rgb(" + parseInt(_color[0]) + "," + parseInt(_color[1]) + "," + parseInt(_color[2]) + ")";
-    return swatch;
-}
 
 function handle_file_select( evt ) {
 
@@ -221,16 +254,17 @@ function handle_file_select( evt ) {
 
             var data = ctx_small.getImageData( 0, 0, canvas_small_width, canvas_small_height );
             var rgbdata = imagedata_to_rgb( data );
+            console.time("mc");
             mc = MedianCut();
             mc.init( rgbdata );
             var palette = mc.get_fixed_size_palette( 8 );
+            console.timeEnd("mc");
 
             // clear any previous swatches
 
             for( var ic = palette.length - 1; ic >= 0; ic-- ) {
                 var color = palette[ic];
                 var hex = farb.pack( [ color[0]/255, color[1]/255, color[2]/255 ] );
-                console.log(hex);
                 CP_ViewModel.colors()[ic].hex(hex);
                 //var sp = create_swatch( ic, color );
                 //swatches.appendChild( sp );
@@ -267,7 +301,7 @@ function file_drag_start( e ) {
 function file_drag_enter( e ) {
 }
 
-function file_drag_over ( e ) {
+function file_drag_over( e ) {
     e.stopPropagation();
     e.preventDefault();
     e.dataTransfer.dropEffect="copy";
@@ -281,7 +315,7 @@ function file_drag_leave( e ) {
     canvas.style.outline = "6px solid #999";
 }
 
-function file_drop      ( e ) {
+function file_drop( e ) {
 
     console.log("file drop");
     
@@ -303,9 +337,9 @@ function file_drag_end  ( e ) {
 
 
 window.onload = function() {
-    document.getElementById("colorpal-input-image").onchange = handle_file_select;
+    document.getElementById("cp-input-image").onchange = handle_file_select;
 
-    canvas              = document.getElementById("colorpal_canvas");
+    canvas              = document.getElementById("cp-canvas");
 
     canvas_small        = document.createElement("canvas");
     canvas_small.width  = canvas_small_width;
@@ -315,13 +349,18 @@ window.onload = function() {
     ctx_small           = canvas_small.getContext("2d");
 
     // Set up drag handles
-    var file_input = document.getElementById("colorpal_canvas");
-    file_input.addEventListener( "dragstart", file_drag_start   , false );
-    file_input.addEventListener( "dragenter", file_drag_enter   , false );
-    file_input.addEventListener( "dragover" , file_drag_over    , false );
-    file_input.addEventListener( "dragleave", file_drag_leave   , false );
-    file_input.addEventListener( "drop"     , handle_file_select, false );
-    file_input.addEventListener( "dragend"  , file_drag_end     , false );
+    var image_drop_zone = document.getElementById("cp-canvas");
+    image_drop_zone.addEventListener( "dragstart", file_drag_start   , false );
+    image_drop_zone.addEventListener( "dragenter", file_drag_enter   , false );
+    image_drop_zone.addEventListener( "dragover" , file_drag_over    , false );
+    image_drop_zone.addEventListener( "dragleave", file_drag_leave   , false );
+    image_drop_zone.addEventListener( "drop"     , handle_file_select, false );
+    image_drop_zone.addEventListener( "dragend"  , file_drag_end     , false );
+
+    /* TODO: enable file input selection of images (esp. for mobile)
+    var file_input = document.getElementById("cp-input-image");
+    file_input.addEventListener( "change", handle_file_select, false );
+    */
 
 
 };
@@ -345,7 +384,7 @@ window.onload = function() {
 
     <div class="clear"></div>
 
-    <input type="file" id="colorpal-input-image"></input>
+    <input type="file" id="cp-input-image"></input>
 
     <div id="list"></div>
 
@@ -367,9 +406,9 @@ window.onload = function() {
 
     <div class="clear"></div>
 
-    <canvas id="colorpal_canvas" class="grid_16"></canvas>
+    <canvas id="cp-canvas" class="grid_16"></canvas>
 
-    <div id="cp-picker"></div>
+    <div id="cp-picker" class="cp-picker-inactive"></div>
 
     <p class="credits grid_24"><a href="http://mwcz.org">Author</a>  <a href="https://github.com/mwcz/ColorPal">Code</a>  <a href="https://twitter.com/mwcz">Twitter</a></p>
 
