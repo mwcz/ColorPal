@@ -1,0 +1,112 @@
+body { font-family: Verdana, sans-serif; color: #fff; background-color: #000; }
+h1 {
+    font-family : 'Titan One';
+    font-weight : 400;
+}
+a { color: #ddd; }
+a:visited { color: #999; }
+p.instructions {
+    font-family: Ovo;
+    font-size: 1.3em;
+}
+h1 {
+    font-size   : 3em;
+}
+p.credits {
+}
+img.logo {
+    float: left;
+}
+
+[draggable] {
+    -webkit-user-selectable: none;
+     -khtml-user-selectable: none;
+       -moz-user-selectable: none;
+         -o-user-selectable: none;
+            user-selectable: none;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+#cp-canvas { 
+
+    outline: 6px solid #999;
+    border: 1px solid #000;
+
+    margin: 24px;
+
+    -webkit-transition: all 0.33s ease-in; /* Safari and Chrome */
+       -moz-transition: all 0.33s ease-in; /* Firefox 4 */
+         -o-transition: all 0.33s ease-in; /* Opera */
+            transition: all 0.33s ease-in;
+}
+
+#cp-input-image {
+    display: none;
+}
+
+/****************************************
+ * Container for all the color swatches *
+ ****************************************/
+
+.cp-swatches {
+    line-height : 0;
+    height: 66px;
+    position    : relative;
+
+    -webkit-transition : all ease 0.13s;
+       -moz-transition : all ease 0.13s;
+         -o-transition : all ease 0.13s;
+            transition : all ease 0.13s;
+
+}
+
+/*********************************
+ * Styles for the swatch squares *
+ *********************************/
+
+.cp-swatch {
+    display  : block;
+    float    : left;
+    position : relative;
+    width    : 80px;
+    height   : 80px;
+
+    -webkit-border-radius: 2px;
+       -moz-border-radius: 2px;
+         -o-border-radius: 2px;
+            border-radius: 2px;
+
+    -webkit-transition : all ease 0.33s;
+       -moz-transition : all ease 0.33s;
+         -o-transition : all ease 0.33s;
+            transition : all ease 0.33s;
+}
+
+.cp-swatch-selected { 
+    top    : 8px;
+}
+
+/***********************
+ * Color picker styles *
+ ***********************/
+
+#cp-picker {
+    position: absolute;
+    right: 10px;
+    -webkit-transition : all ease 0.33s;
+       -moz-transition : all ease 0.33s;
+         -o-transition : all ease 0.33s;
+            transition : all ease 0.33s;
+}
+.cp-picker-active {
+    opacity: 1.0;
+    visibility: visible;
+}
+.cp-picker-inactive {
+    opacity: 0;
+    visibility: hidden;
+}
+
