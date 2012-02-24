@@ -3,12 +3,11 @@ var ctx,
     canvas,
     canvas_small,
     mc,
-    img_width  = 0,
-    img_height = 0,
-    canvas_width  = 470,
-    canvas_height = 470,
+    img_width           = 0,
+    img_height          = 0,
+    max_canvas_width    = 468,
     canvas_small_height = 128,
-    canvas_small_width = 128;
+    canvas_small_width  = 128;
 
 function handle_file_select( evt ) {
 
@@ -43,8 +42,8 @@ function handle_file_select( evt ) {
                 // height > width
             }
             */
-            canvas_width  = ( img.width  > canvas_width  ) ? ( img_ratio > 1 ) ? canvas_width  : canvas_width*img_ratio  : img.width;
-            canvas_height = canvas_width / img_ratio;
+            var canvas_width  = ( img.width  > max_canvas_width  ) ? ( img_ratio > 1 ) ? max_canvas_width  : max_canvas_width*img_ratio  : img.width;
+            var canvas_height = canvas_width / img_ratio;
             // Resize the canvas to the image size
             canvas.width             = canvas_width;
             canvas.height            = canvas_height;
