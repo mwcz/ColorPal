@@ -47,11 +47,9 @@ function handle_file_select( evt ) {
 
             var data = ctx_small.getImageData( 0, 0, canvas_small_width, canvas_small_height );
             var rgbdata = imagedata_to_rgb( data );
-            console.time("mc");
             mc = MedianCut();
             mc.init( rgbdata );
             var palette = mc.get_fixed_size_palette( 8 );
-            console.timeEnd("mc");
 
             // clear any previous swatches
 
