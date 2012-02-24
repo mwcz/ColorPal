@@ -86,7 +86,8 @@ function handle_file_select( evt ) {
 
         reader.onload = function(e) {
 
-            // Assign the image's src to the filesystem image's data URL [http://en.wikipedia.org/wiki/Data_URI_scheme]
+            // Assign the image's src to the filesystem image's data URL
+            // [http://en.wikipedia.org/wiki/Data_URI_scheme]
             img.src = e.target.result; 
 
         };
@@ -111,28 +112,14 @@ function file_drag_over( e ) {
     e.stopPropagation();
     e.preventDefault();
     e.dataTransfer.dropEffect="copy";
-    canvas.style.outline = "6px solid #fff";
+    $(canvas).addClass('cp-canvas-drag-over');
 }
 
 function file_drag_leave( e ) {
     e.stopPropagation();
     e.preventDefault();
     e.dataTransfer.dropEffect="copy";
-    canvas.style.outline = "6px solid #999";
-}
-
-function file_drop( e ) {
-
-    console.log("file drop");
-    
-    e.stopPropagation();
-    e.preventDefault();
-
-    var files = e.dataTransfer.files;
-    for( var i = 0, f; f = files[i]; i++ ) {
-        console.log( f );
-    }
-
+    $(canvas).removeClass('cp-canvas-drag-over');
 }
 
 function file_drag_end  ( e ) {

@@ -30,17 +30,32 @@ img.logo {
     margin-top: 20px;
 }
 
+/*****************
+ * Canvas styles *
+ *****************/
+
 #cp-canvas { 
+    margin-top : 24px;
 
-    outline: 6px solid #999;
-    border: 1px solid #000;
+    -webkit-transition: all 0.53s ease-in, background-color 0s ease;
+       -moz-transition: all 0.53s ease-in, background-color 0s ease;
+         -o-transition: all 0.53s ease-in, background-color 0s ease;
+            transition: all 0.53s ease-in, background-color 0s ease;
+}
+.cp-canvas-default {
+    /* canvas styles before any draggin' or droppin' */
+    border        : 1px solid #444;
+    border-radius : 2px;
 
-    margin: 24px;
+    -webkit-box-shadow: 0px 0px 0px 4px #111;
+       -moz-box-shadow: 0px 0px 0px 4px #111;
+         -o-box-shadow: 0px 0px 0px 4px #111;
+            box-shadow: 0px 0px 0px 4px #111;
+}
+.cp-canvas-drag-over { 
+    /* canvas styles while an image is being dragged over */
+    background-color: #060606;
 
-    -webkit-transition: all 0.33s ease-in; /* Safari and Chrome */
-       -moz-transition: all 0.33s ease-in; /* Firefox 4 */
-         -o-transition: all 0.33s ease-in; /* Opera */
-            transition: all 0.33s ease-in;
 }
 
 #cp-input-image {
