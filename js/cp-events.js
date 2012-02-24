@@ -32,16 +32,6 @@ function handle_file_select( evt ) {
 
             var img_ratio     = img.width / img.height;
 
-            /*
-            if( img_ratio > 1 ) { 
-                // width > height
-                if( img.width > canvas_width ) {
-                    canvas_height = img.height
-                }
-            } else {
-                // height > width
-            }
-            */
             var canvas_width  = ( img.width  > max_canvas_width  ) ? ( img_ratio > 1 ) ? max_canvas_width  : max_canvas_width*img_ratio  : img.width;
             var canvas_height = canvas_width / img_ratio;
             // Resize the canvas to the image size
