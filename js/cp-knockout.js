@@ -1,19 +1,42 @@
 var farb, pick, selected, CP_ViewModel;
 $(document).ready(function() {
 
-    CP_ViewModel = {
+    function CP_ViewModelFn() {
+        var self = this;
 
-        colors : ko.observableArray( [
+        self.colors = ko.observableArray( [
             new CP_Color("#000"), new CP_Color("#000"),
             new CP_Color("#000"), new CP_Color("#000"),
             new CP_Color("#000"), new CP_Color("#000"),
             new CP_Color("#000"), new CP_Color("#000"),
-        ]),
+        ]);
+
+        self.palette_created = ko.computed( function() {
+
+            var i,
+                is_default_palette = true;
+
+            for( i = self.colors().length - 1; i >= 0; --i ) {
+                if ( self.colors()[i].hex() != "#000" ) {
+                    is_default_palette = false;
+                }
+            }
+
+            return !is_default_palette;
+
+        });
 
     };
 
+    CP_ViewModel = new CP_ViewModelFn;
+
     ko.applyBindings( CP_ViewModel );
 
+    function CP_Color( hex ) {
+        return {
+            hex: ko.observable(hex)
+        };
+    }
 
     farb = $.farbtastic('#cp-picker');
     farb.linkTo(function( hex ) {
@@ -59,11 +82,6 @@ $(document).ready(function() {
             }
         });
 
-    function CP_Color( hex ) {
-        return {
-            hex: ko.observable(hex)
-        };
-    }
 });
 
 

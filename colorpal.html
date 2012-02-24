@@ -37,23 +37,41 @@
     <div data-bind="template: { name: 'CP_PaletteTemplate' }"></div>
 
     <script id="CP_PaletteTemplate" type="text/html">
+        <div id="cp-swatches"
+             data-bind="visible: palette_created()">
         {{each(index,hex) colors}}
         <div 
-            class="cp-swatch" 
+            class="cp-swatch grid_3" 
             id="cp-swatch-${index}" 
-            data-bind="style: { backgroundColor: hex() }"> </div>
-        <input 
-            type="hidden" 
-            data-bind="value: hex"
-            size="7" />
+            data-bind="
+                style: { backgroundColor: hex(), 
+                boxShadow: '0px 0px 0px 4px hex()' }
+            "> 
+        </div>
         {{/each}}
+        </div> <!-- /#cp-swatches -->
     </script>
 
     <div class="clear"></div>
 
     <canvas id="cp-canvas" class="cp-canvas-default grid_24"></canvas>
 
-    <div id="cp-picker" class="cp-picker-inactive"></div>
+    <div data-bind="visible: palette_created()" id="cp-picker" class="cp-picker-inactive grid_12"></div>
+
+    <div class="clear"></div>
+
+    <div data-bind="template: { name: 'CP_PaletteColorCodeTemplate' }"></div>
+
+    <script id="CP_PaletteColorCodeTemplate" type="text/html">
+        {{each(index,hex) colors}}
+        <input 
+            class="cp-swatch-color-code grid_3" 
+            data-bind="
+                value: hex, 
+                style: { boxShadow: '0px 0px 0px 4px hex()' }"
+            />
+        {{/each}}
+    </script>
 
     <p class="credits grid_24"><a href="http://mwcz.org">Author</a>  <a href="https://github.com/mwcz/ColorPal">Code</a>  <a href="https://twitter.com/mwcz">Twitter</a></p>
 
