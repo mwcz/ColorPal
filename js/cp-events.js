@@ -33,7 +33,7 @@ function handle_file_select( evt ) {
             var img_ratio     = img.width / img.height;
 
             var canvas_width  = ( img.width  > max_canvas_width  ) ? ( img_ratio > 1 ) ? max_canvas_width  : max_canvas_width*img_ratio  : img.width;
-            var canvas_height = canvas_width / img_ratio;
+            var canvas_height = Math.floor( canvas_width / img_ratio );
             // Resize the canvas to the image size
             canvas.width             = canvas_width;
             canvas.height            = canvas_height;
