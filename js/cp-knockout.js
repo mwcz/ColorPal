@@ -11,6 +11,8 @@ $(document).ready(function() {
             new CP_Color("#000"), new CP_Color("#000"),
         ]);
 
+        self.selected = ko.observable(false);
+
         self.palette_created = ko.computed( function() {
 
             var i,
@@ -63,6 +65,7 @@ $(document).ready(function() {
 
                 // now nothing is selected
                 selected = false;
+                CP_ViewModel.selected(false);
             } else {
 
                 // get the swatch number from the id "cp-swatch-2", etc.
@@ -75,6 +78,7 @@ $(document).ready(function() {
 
                 // make swatch look selected
                 $(selected = this).addClass('cp-swatch-selected');
+                CP_ViewModel.selected(true);
 
                 // set the colorpicker to this swatch's color. (note that
                 // this will cause the colorpicker's callback to fire)
