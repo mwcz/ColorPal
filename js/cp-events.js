@@ -1,3 +1,6 @@
+(function() {
+
+
 var ctx,
     ctx_small,
     canvas,
@@ -144,4 +147,4 @@ window.onload = function() {
 };
 
 
-
+}());
