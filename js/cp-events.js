@@ -117,7 +117,7 @@ function file_drag_end  ( e ) {
 
 
 
-window.onload = function() {
+$(window).load( function() {
     document.getElementById("cp-input-image").onchange = handle_file_select;
 
     canvas              = document.getElementById("cp-canvas");
@@ -144,7 +144,7 @@ window.onload = function() {
     */
 
 
-};
+} );
 
 
 }());
