@@ -26,6 +26,9 @@ $(document).ready(function() {
 
             return !is_default_palette;
 
+			// yes, this means pasting in a pure black image
+			// will not cause swatches to appear.  I'm okay with that :)
+
         });
 
     };
