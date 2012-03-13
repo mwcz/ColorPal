@@ -1,6 +1,7 @@
 var farb, pick, selected, CP_ViewModel;
 $(document).ready(function() {
 
+
     function CP_ViewModelFn() {
         var self = this;
 
@@ -59,10 +60,6 @@ $(document).ready(function() {
             }
             if ( selected == this ) {
 
-                // make colorpicker look deactivated
-                pick.removeClass('cp-picker-active');
-                pick.addClass('cp-picker-inactive');
-
                 // make swatch look deselected
                 $(this).removeClass('cp-swatch-selected');
 
@@ -74,10 +71,6 @@ $(document).ready(function() {
                 // get the swatch number from the id "cp-swatch-2", etc.
                 // just grab the last character with slice(-1)
                 var swatch_num = $(this).attr('id').slice(-1);
-
-                // make color picker look activated
-                pick.removeClass('cp-picker-inactive');
-                pick.addClass('cp-picker-active');
 
                 // make swatch look selected
                 $(selected = this).addClass('cp-swatch-selected');
