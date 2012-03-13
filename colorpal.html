@@ -35,7 +35,7 @@
 
     <script id="CP_PaletteTemplate" type="text/html">
         <div id="cp-swatches"
-             data-bind = "visible: palette_created()">
+             data-bind = "css: { off: !palette_created() }">
         {{each(index,hex) colors}}
         <div 
             class="cp-border cp-swatch grid_3" 
@@ -50,8 +50,8 @@
 
     <canvas id="cp-canvas" class="cp-canvas-default cp-border grid_24"></canvas>
 
-    <div data-bind="visible: selected" id="cp-toolbox" class="cp-border grid_12">
-        <div id="cp-picker" class="cp-picker-inactive grid_6"></div>
+    <div data-bind="css: { off: !selected() }" id="cp-toolbox" class="cp-border grid_12 fade">
+        <div id="cp-picker" class="grid_6"></div>
     </div>
 
     <div class="clear"></div>

@@ -63,10 +63,10 @@ img.logo {
 
 .cp-swatches {
 
-    -webkit-transition : all ease 0.13s;
-       -moz-transition : all ease 0.13s;
-         -o-transition : all ease 0.13s;
-            transition : all ease 0.13s;
+    -webkit-transition : all 0.13s ease;
+       -moz-transition : all 0.13s ease;
+         -o-transition : all 0.13s ease;
+            transition : all 0.13s ease;
 
 }
 
@@ -83,10 +83,10 @@ img.logo {
 
     cursor   : pointer;
 
-    -webkit-transition : all ease 0.13s;
-       -moz-transition : all ease 0.13s;
-         -o-transition : all ease 0.13s;
-            transition : all ease 0.13s;
+    -webkit-transition : all 0.13s ease;
+       -moz-transition : all 0.13s ease;
+         -o-transition : all 0.13s ease;
+            transition : all 0.13s ease;
 }
 
 /**********************
@@ -132,10 +132,10 @@ img.logo {
          -o-border-radius: 2px;
             border-radius: 2px;
 
-    -webkit-box-shadow: 0px 0px 0px 3px #111;
-       -moz-box-shadow: 0px 0px 0px 3px #111;
-         -o-box-shadow: 0px 0px 0px 3px #111;
-            box-shadow: 0px 0px 0px 3px #111;
+    -webkit-box-shadow: 0px 0px 0px 3px #222;
+       -moz-box-shadow: 0px 0px 0px 3px #222;
+         -o-box-shadow: 0px 0px 0px 3px #222;
+            box-shadow: 0px 0px 0px 3px #222;
 
 }
 
@@ -151,4 +151,16 @@ img.logo {
  ****************************************/
 #cp-toolbox {
 	margin-top: 10px;
+}
+
+/*********************************************
+ * Classes for turning things "on" and "off" *
+ *********************************************/
+
+.off { display: none; }
+.fade { 
+    -webkit-transition : all 0.33s ease;
+       -moz-transition : all 0.33s ease;
+         -o-transition : all 0.33s ease;
+            transition : all 0.33s ease;
 }
