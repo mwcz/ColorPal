@@ -50,6 +50,20 @@
         </div> <!-- /#cp-swatches -->
     </script>
 
+    <div data-bind="template: { name: 'CP_PaletteColorCodeTemplate' }"></div>
+
+    <script id="CP_PaletteColorCodeTemplate" type="text/html">
+        <div id="cp-swatches-color-codes"
+             data-bind="visible: ColorPal_selected">
+        {{each(index,hex) colors}}
+        <input 
+            class="cp-swatch-color-code cp-border grid_3" 
+            data-bind="value: hex" />
+        {{/each}}
+        </div> <!-- /#cp-swatches-color-codes -->
+    </script>
+
+
     <div class="clear"></div>
 
     <canvas id="cp-canvas" class="cp-canvas-default cp-border grid_24"></canvas>
@@ -59,20 +73,6 @@
     </div>
 
     <div class="clear"></div>
-
-    <div data-bind="template: { name: 'CP_PaletteColorCodeTemplate' }"></div>
-
-    <script id="CP_PaletteColorCodeTemplate" type="text/html">
-        <div id="cp-swatches-color-codes"
-             data-bind="visible: selected">
-        {{each(index,hex) colors}}
-        <input 
-            class="cp-swatch-color-code cp-border grid_3" 
-            data-bind="value: hex" />
-        {{/each}}
-        </div> <!-- /#cp-swatches-color-codes -->
-    </script>
-
     <p class="credits grid_24">
         <a href="http://mwcz.org">Author</a>  
         <a href="https://github.com/mwcz/ColorPal">Code</a>  
