@@ -32,6 +32,29 @@ $(document).ready(function() {
 
         });
 
+        self.output = ko.computed({
+
+            read: function() {
+                var colorstring = "";
+                for( var color in self.colors() ) {
+                    colorstring += self.colors()[color].hex() + "\n";
+                }
+                return colorstring;
+            },
+
+            write: function (value) {
+                var colorarray = value.trim().split("\n"),
+                    i = self.colors().length - 1;
+                for ( ; i >= 0; --i ) {
+                    self.colors()[i].hex( colorarray[i] );
+                }
+                console.log(value);
+            },
+
+            owner: self
+
+        });
+
     };
 
     CP_ViewModel = new CP_ViewModelFn;

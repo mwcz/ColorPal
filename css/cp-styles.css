@@ -149,8 +149,20 @@ img.logo {
 /****************************************
  * Toolbox, contains color picker et al *
  ****************************************/
-#cp-toolbox {
+#cp-toolbox,
+#cp-output {
 	margin-top: 10px;
+}
+#cp-output {
+    padding: 0;
+}
+#cp-output textarea {
+    margin     : 0;
+    border     : 0;
+    padding    : 5px;
+    background : #000;
+    color      : #afaeae;
+    width      : 220px;
 }
 
 /*********************************************
