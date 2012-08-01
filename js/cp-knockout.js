@@ -1,6 +1,19 @@
 var farb, pick, selected, CP_ViewModel;
 $(document).ready(function() {
 
+    var OUTPUT_FORMATS = {
+        "hex"  : "VALUE;",
+        "sass" : "$cpal-color-INDEX: VALUE;",
+        "less" : "@cpal-color-INDEX: VALUE;",
+    };
+
+    var DEFAULT_OUTPUT_FORMAT = "hex";
+
+
+
+    function build_output_color_string( index, value, type ) {
+        return OUTPUT_FORMATS[ type ].replace( "INDEX", index ).replace( "VALUE", value );
+    }
 
     function CP_ViewModelFn() {
         var self = this;
@@ -13,6 +26,8 @@ $(document).ready(function() {
         ]);
 
         self.selected = ko.observable(false);
+
+        self.output_type = ko.observable( DEFAULT_OUTPUT_FORMAT );
 
         self.palette_created = ko.computed( function() {
 
@@ -36,8 +51,13 @@ $(document).ready(function() {
 
             read: function() {
                 var colorstring = "";
-                for( var color in self.colors() ) {
-                    colorstring += self.colors()[color].hex() + "\n";
+                for( var index = 0; index < self.colors().length; ++index ) {
+                    colorstring += build_output_color_string( index, self.colors()[index].hex(), self.output_type() );
+
+                    // Add a \n if we're not yet at the last value
+                    if( self.colors().length - 1 != index ) {
+                        colorstring += "\n";
+                    }
                 }
                 return colorstring;
             },
