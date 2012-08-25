@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -63,16 +63,24 @@
         </div> <!-- /#cp-swatches-color-codes -->
     </script>
 
-
     <div class="clear"></div>
 
     <canvas id="cp-canvas" class="cp-canvas-default cp-border grid_24"></canvas>
 
-    <div data-bind="css: { off: !selected() }" id="cp-toolbox" class="cp-border grid_12 fade">
-        <div id="cp-picker" class="grid_6"></div>
+    <div data-bind="css: { off: !selected() }" id="cp-toolbox" class="cp-border grid_6 fade">
+        <div id="cp-picker" class="fade"></div>
+    </div>
+
+    <div data-bind="css: { off: !selected() }" id="cp-output"  class="cp-border grid_6 fade">
+        <textarea 
+            data-bind="value: output, valueUpdate: 'keyup'" 
+            rows="14" 
+            id="cp-output" 
+            name="cp-output"></textarea>
     </div>
 
     <div class="clear"></div>
+
     <p class="credits grid_24">
         <a href="http://mwcz.org">Author</a>  
         <a href="https://github.com/mwcz/ColorPal">Code</a>  
