@@ -89,6 +89,22 @@ img.logo {
             transition : all 0.13s ease;
 }
 
+.cp-swatch-selected::after {
+    content       : '';
+    display       : block;
+    position      : relative;
+    height        : 112px;
+    width         : 110px;
+    border        : 1px solid #ddd;
+    border-radius : 5px;
+    top           : -2px;
+    left          : -2px;
+    -webkit-transition : all ease 0.33s;
+       -moz-transition : all ease 0.33s;
+         -o-transition : all ease 0.33s;
+            transition : all ease 0.33s;
+}
+
 /**********************
  * Swatch color codes *
  **********************/
@@ -127,10 +143,10 @@ img.logo {
  ******************************************************/
 .cp-border {
 
-    -webkit-border-radius: 2px;
-       -moz-border-radius: 2px;
-         -o-border-radius: 2px;
-            border-radius: 2px;
+    -webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+         -o-border-radius: 4px;
+            border-radius: 4px;
 
     -webkit-box-shadow: 0px 0px 0px 3px #222;
        -moz-box-shadow: 0px 0px 0px 3px #222;
