@@ -1,5 +1,7 @@
 function imagedata_to_rgb( _image_data ) {
 
+    "use strict";
+
     // Translates an ImageData object's CanvasPixelArray into
     // an RGB array of the form:
     //
@@ -10,10 +12,11 @@ function imagedata_to_rgb( _image_data ) {
     //          [ rN, gN, bN ]
     //      ]
 
-    var rgb_array = [];
-	var rgb_color;
+    var rgb_array = [],
+        rgb_color,
+        i;
 
-    for( var i = _image_data.data.length - 1; i > 1; i -= 4 ) {
+    for( i = _image_data.data.length - 1; i > 1; i -= 4 ) {
 
 		rgb_color = [ 
             _image_data.data[ i - 3 ], 
