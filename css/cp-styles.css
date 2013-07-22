@@ -35,13 +35,13 @@ img.logo {
  *****************/
 
 #cp-canvas { 
-
 	margin-top: 10px;
-
-    -webkit-transition: all 0.53s ease-in, background-color 0s ease;
-       -moz-transition: all 0.53s ease-in, background-color 0s ease;
-         -o-transition: all 0.53s ease-in, background-color 0s ease;
-            transition: all 0.53s ease-in, background-color 0s ease;
+}
+.slide {
+    -webkit-transition: all 0.33s ease-in, background-color 0s ease;
+       -moz-transition: all 0.33s ease-in, background-color 0s ease;
+         -o-transition: all 0.33s ease-in, background-color 0s ease;
+            transition: all 0.33s ease-in, background-color 0s ease;
 }
 .cp-canvas-default {
     /* canvas styles before any draggin' or droppin' */

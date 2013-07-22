@@ -1,3 +1,4 @@
+// TODO this file is a mess.  Unmess it.
 (function($) {
 
     var ctx,

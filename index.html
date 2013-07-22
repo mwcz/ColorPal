@@ -67,11 +67,11 @@
 
     <canvas id="cp-canvas" class="cp-canvas-default cp-border grid_24"></canvas>
 
-    <div data-bind="css: { off: !selected() }" id="cp-toolbox" class="cp-border grid_6 fade">
+    <div data-bind="css: { off: !palette_created() }" id="cp-toolbox" class="cp-border grid_6 fade">
         <div id="cp-picker" class="fade"></div>
     </div>
 
-    <div data-bind="css: { off: !selected() }" id="cp-output"  class="cp-border grid_6 fade">
+    <div data-bind="css: { off: !palette_created() }" id="cp-output"  class="cp-border grid_6 fade">
         <textarea 
             data-bind="value: output, valueUpdate: 'keyup'" 
             rows="14" 
