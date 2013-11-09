@@ -14,3 +14,10 @@ Usage
 -----
 
 Visit [colorpal.org](http://colorpal.org/)!
+
+There is also a Node.js [ColorPal utility](https://github.com/mwcz/colorpal-cli) for generating color palettes from
+images on the command line.
+
+Here's a recording of ColorPal itself, and then the command-line tool:
+
+![colorpal command line utility animation](https://raw.github.com/mwcz/colorpal-cli/master/images/cp.node.gif "colorpal command line utility animation")
