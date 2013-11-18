@@ -76,12 +76,17 @@ var ColorPal_farb, ColorPal_pick, ColorPal_selected, ColorPal_ViewModel;
                 },
 
                 write: function (value) {
-                    var colorarray = value.trim().split("\n"),
+                    var colorarray,
                         i;
+
+                    colorarray = value
+                        .replace(/;+/g, "") // remove semicolons
+                        .trim()
+                        .split("\n");
+
                     for ( i = self.colors().length - 1; i >= 0; --i ) {
                         self.colors()[i].hex( colorarray[i] );
                     }
-                    console.log(value);
                 },
 
                 owner: self
@@ -127,7 +132,8 @@ var ColorPal_farb, ColorPal_pick, ColorPal_selected, ColorPal_ViewModel;
                 var swatch_num = $(this).attr('id').slice(-1);
 
                 // make swatch look selected
-                $(ColorPal_selected = this).addClass('cp-swatch-selected');
+                ColorPal_selected = this;
+                $(ColorPal_selected).addClass('cp-swatch-selected');
                 ColorPal_ViewModel.selected(true);
 
                 // set the colorpicker to this swatch's color. (note that
