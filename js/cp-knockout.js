@@ -14,7 +14,7 @@ var ColorPal_farb, ColorPal_pick, ColorPal_selected, ColorPal_ViewModel;
         DEFAULT_OUTPUT_FORMAT = "hex";
 
         OUTPUT_FORMATS = {
-            "hex"  : "VALUE;",
+            "hex"  : "VALUE",
             "sass" : "$cpal-color-INDEX: VALUE;",
             "less" : "@cpal-color-INDEX: VALUE;",
         };
@@ -76,13 +76,8 @@ var ColorPal_farb, ColorPal_pick, ColorPal_selected, ColorPal_ViewModel;
                 },
 
                 write: function (value) {
-                    var colorarray,
+                    var colorarray = value.split("\n"),
                         i;
-
-                    colorarray = value
-                        .replace(/;+/g, "") // remove semicolons
-                        .trim()
-                        .split("\n");
 
                     for ( i = self.colors().length - 1; i >= 0; --i ) {
                         self.colors()[i].hex( colorarray[i] );
