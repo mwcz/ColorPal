@@ -58,12 +58,15 @@
             canvas_width  = ( img.width  > max_canvas_width  ) ? ( img_ratio > 1 ) ? max_canvas_width  : max_canvas_width*img_ratio  : img.width;
             canvas_height = Math.floor( canvas_width / img_ratio );
             // Resize the canvas to the image size
-            canvas.width             = canvas_width;
-            canvas.height            = canvas_height;
+            canvas.width             = 960;
+            canvas.height            = 680;
 
             // Resize the canvas with CSS to trigger CSS3 transitions
-            canvas.style.width       = canvas_width + "px";
-            canvas.style.height      = canvas_height + "px";
+            //canvas.style.width       = canvas_width + "px";
+            //canvas.style.height      = canvas_width + "px";
+
+            // Clear the small canvas context
+            ctx_small.clearRect( 0, 0, canvas_small_width, canvas_small_height );
 
             // Draw the downsized image inside the canvas
             ctx_small.drawImage( img, 0, 0, canvas_small_width, canvas_small_height );
@@ -73,6 +76,8 @@
             mc = new MedianCut();
             mc.init( rgbdata );
             palette = mc.get_fixed_size_palette( 8 );
+
+            ColorCube.init(canvas, rgbdata);
 
             // clear any previous swatches
 
@@ -85,7 +90,7 @@
             }
 
             // Draw the display image
-            ctx.drawImage( img, 0, 0, canvas_width, canvas_height );
+            //ctx.drawImage( img, 0, 0, canvas_width, canvas_height );
 
         };
 
@@ -144,7 +149,6 @@
         canvas_small.width  = canvas_small_width;
         canvas_small.height = canvas_small_height;
 
-        ctx                 = canvas.getContext("2d");
         ctx_small           = canvas_small.getContext("2d");
 
         // Set up drag handles
