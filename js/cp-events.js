@@ -60,18 +60,20 @@
             // Resize the canvas to the image size
             canvas.width             = 960;
             canvas.height            = 680;
+            canvas_small.width = img.width;
+            canvas_small.height = img.height;
 
             // Resize the canvas with CSS to trigger CSS3 transitions
             //canvas.style.width       = canvas_width + "px";
             //canvas.style.height      = canvas_width + "px";
 
             // Clear the small canvas context
-            ctx_small.clearRect( 0, 0, canvas_small_width, canvas_small_height );
+            ctx_small.clearRect( 0, 0, img.width, img.height );
 
             // Draw the downsized image inside the canvas
-            ctx_small.drawImage( img, 0, 0, canvas_small_width, canvas_small_height );
+            ctx_small.drawImage( img, 0, 0, img.width, img.height );
 
-            data = ctx_small.getImageData( 0, 0, canvas_small_width, canvas_small_height );
+            data = ctx_small.getImageData( 0, 0, img.width, img.height );
             rgbdata = imagedata_to_rgb( data );
             mc = new MedianCut();
             mc.init( rgbdata );
