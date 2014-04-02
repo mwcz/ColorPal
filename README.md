@@ -1,7 +1,8 @@
 ColorPal!
 =========
 
-[ColorPal](http://colorpal.org/) is an HTML5 color palette generation tool.  
+[ColorPal](http://colorpal.org/) is an HTML5 color palette generation tool.
+This branch contains an in-progress rewrite of ColorPal using [AngularJS][1].
 
 Blog posts about ColorPal
 -------------------------
@@ -21,3 +22,5 @@ images on the command line.
 Here's a recording of ColorPal itself, and then the command-line tool:
 
 ![colorpal command line utility animation](https://raw.github.com/mwcz/colorpal-cli/master/images/cp.node.gif "colorpal command line utility animation")
+
+[1]: http://angularjs.org/
